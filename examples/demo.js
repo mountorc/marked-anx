@@ -1,15 +1,21 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const { marked } = require('marked');
-const markedAnx = require('../src/index');
+import express from 'express';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { marked } from 'marked';
+import markedAnx from '../src/index.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = 3001;
 
-const { renderer } = markedAnx();
-marked.setOptions({
-  renderer: renderer
+const anxPlugin = markedAnx();
+const { renderer, extensions } = anxPlugin(marked);
+marked.use({
+  renderer: renderer,
+  extensions: extensions
 });
 
 app.get('/', (req, res) => {

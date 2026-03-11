@@ -2,9 +2,12 @@
   "name": "marked-anx",
   "version": "1.0.0",
   "description": "ANX plugin for marked",
-  "main": "src/index.js",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "scripts": {
-    "start": "node examples/demo.js"
+    "start": "node examples/demo.js",
+    "build": "mkdir -p dist && cp src/index.js dist/index.cjs && echo 'import marked from \"marked\";' > dist/index.mjs && tail -n +2 src/index.js | sed 's/module.exports = markedAnx;/export default markedAnx;/' >> dist/index.mjs"
   },
   "dependencies": {
     "express": "^4.18.2",
