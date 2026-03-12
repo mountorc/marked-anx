@@ -178,6 +178,8 @@ function markedAnx() {
     // 处理段落中的ANX语法
     renderer.paragraph = function(token) {
       let text = token.text || '';
+      
+      // 处理 {{anx}} 语法
       const anxMatch = text.match(/^\{\{anx\}\}(.*)\{\{anx\}\}$/s);
       if (anxMatch) {
         try {
@@ -187,6 +189,18 @@ function markedAnx() {
           console.error('ANX plugin error in paragraph:', error);
         }
       }
+      
+      // 处理 <anx> 标签语法
+      const anxTagMatch = text.match(/^<anx>(.*)<\/anx>$/s);
+      if (anxTagMatch) {
+        try {
+          const component = JSON.parse(anxTagMatch[1]);
+          return `<div class="anx-container">${renderComponent(component)}</div>`;
+        } catch (error) {
+          console.error('ANX plugin error in <anx> tag:', error);
+        }
+      }
+      
       return originalParagraph ? originalParagraph.call(this, token) : `<p>${text}</p>`;
     };
     
