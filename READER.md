@@ -300,7 +300,6 @@ marked-anx/
 ├── examples/         # Example files
 │   ├── demo.js       # Demo server using the plugin
 │   ├── demo-plugin.js # Demo server using the component directly
-│   ├── demo-component.html # Static HTML demo
 │   └── demo.md       # Demo markdown file
 ├── READER.md         # This documentation
 ├── package.json      # Project configuration
@@ -649,7 +648,6 @@ marked-anx/
 ├── examples/         # 示例文件
 │   ├── demo.js       # 使用插件的演示服务器
 │   ├── demo-plugin.js # 直接使用组件的演示服务器
-│   ├── demo-component.html # 静态 HTML 演示
 │   └── demo.md       # 演示 markdown 文件
 ├── READER.md         # 本文档
 ├── package.json      # 项目配置
