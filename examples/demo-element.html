@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ANX Test</title>
+  <script type="module" src="../src/component/anx-element.js"></script>
+  <style>
+    .anx-container {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin: 20px 0;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+    }
+    .anx-board {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px;
+    }
+    .anx-text {
+      padding: 10px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>ANX Test</h1>
+  <anx-render>
+    {
+      "kind":"board",
+      "kinds":[
+        {"kind":"text","value":"anxtest"},
+        {"kind":"text","value":"anxtest222"},
+{
+  "kind": "box",
+  "title": "Product List",
+  "data": [
+    { "name": "Product 1", "price": 100 },
+    { "name": "Product 2", "price": 28000 },
+    { "name": "Product 3", "price": 300 }
+  ],
+  "html": "<div class='product'><h2>{{name}}</h2><p class='price'>${{price}}</p></div>"
+}
+      ]
+    }
+  </anx-render>
+</body>
+</html>

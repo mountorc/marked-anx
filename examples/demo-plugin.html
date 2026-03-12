@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ANX Plugin Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: white; color: black; }
+    h1, h2 { color: #333; }
+    .anx-container {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin: 10px 0;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>ANX Plugin Test</h1>
+  <p>This is the static HTML version of the ANX plugin test.</p>
+  <p>For the dynamic version, please run <code>node demo-plugin.js</code> and visit http://localhost:3001</p>
+  
+  <div class="anx-container">
+    <h3>Box Component</h3>
+    <div class="anx-box">
+      <div class="anx-box-title">Welcome</div>
+      <div class="anx-box-content">
+        <p>Hello, {{user.name}}!</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="anx-container">
+    <h3>Box with Data</h3>
+    <div class="anx-box">
+      <div class="anx-box-title">Product List</div>
+      <div class="anx-box-content">
+        <div class="product">
+          <h2>Product 1</h2>
+          <p class="price">$100</p>
+        </div>
+        <div class="product">
+          <h2>Product 2</h2>
+          <p class="price">$28000</p>
+        </div>
+        <div class="product">
+          <h2>Product 3</h2>
+          <p class="price">$300</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="anx-container">
+    <h3>Board Component</h3>
+    <div class="anx-board">
+      <div class="anx-text">User Information</div>
+      <input type="text" class="anx-input" placeholder="Please enter your name">
+      <input type="text" class="anx-input" placeholder="Please enter your email">
+      <button class="anx-button">Submit</button>
+    </div>
+  </div>
+</body>
+</html>

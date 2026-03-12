@@ -6,8 +6,9 @@
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "scripts": {
-    "start": "node examples/demo.js",
-    "build": "mkdir -p dist && cp src/index.js dist/index.cjs && echo 'import * as marked from \"marked\";' > dist/index.mjs && tail -n +2 src/index.js | sed 's/module.exports = markedAnx;/export default markedAnx;/' >> dist/index.mjs"
+    "start": "node examples/demo-component.js",
+    "start:element": "node start-demo.js",
+    "build": "mkdir -p dist && cp src/index.js dist/index.cjs && cp -r src/plugin dist/ && cp -r src/component dist/ && echo 'import markedAnx from \"plugin/index.js\"; import \"component/anx-element.js\"; export default markedAnx; export { markedAnx }; ' > dist/index.mjs"
   },
   "dependencies": {
     "express": "^4.18.2",

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ANX Component Test</title>
+  <script type="module" src="../src/component/anx-element.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: white; color: black; }
+    h1, h2 { color: #333; }
+  </style>
+</head>
+<body>
+  <h1>ANX Component Test</h1>
+  <p>This is the static HTML version of the ANX component test.</p>
+  <p>For the dynamic version, please run <code>node demo-component.js</code> and visit http://localhost:3002</p>
+  
+  <h2>Test ANX Plugin</h2>
+  
+  <h3>Box Component</h3>
+  <anx-render>{"kind":"box","title":"Welcome","html":"<p>Hello, {{user.name}}!</p>"}</anx-render>
+  
+  <h3>Box with Data</h3>
+  <anx-render>{"kind":"box","title":"Product List","data":[{"name":"Product 1","price":100},{"name":"Product 2","price":28000},{"name":"Product 3","price":300}],"html":"<div class='product'><h2>{{name}}</h2><p class='price'>${{price}}</p></div>"}</anx-render>
+  
+  <h3>Board Component</h3>
+  <anx-render>{"kind":"board","kinds":[{"kind":"text","value":"User Information"},{"kind":"input","placeholder":"Please enter your name","nick":"username"},{"kind":"input","placeholder":"Please enter your email","nick":"email"},{"kind":"button","label":"Submit","action":"submitForm"}]}</anx-render>
+  
+  <h3>Text Component</h3>
+  <anx-render>{"kind":"text","value":"This is a text component"}</anx-render>
+  
+  <h3>Input Component</h3>
+  <anx-render>{"kind":"input","placeholder":"Enter something","value":"Initial value","nick":"inputField"}</anx-render>
+  
+  <h3>Button Component</h3>
+  <anx-render>{"kind":"button","label":"Click Me","action":"doSomething"}</anx-render>
+</body>
+</html>

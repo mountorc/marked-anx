@@ -1,0 +1,252 @@
+// 定义自定义元素 anx-component
+import { renderComponent } from '../common/common.js';
+
+class AnxComponentElement extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
+
+  connectedCallback() {
+    try {
+      // 解析标签内的 JSON 内容
+      console.log("Element connected:", this);
+      console.log("Element tag name:", this.tagName);
+      
+      // 直接处理内容，不需要 setTimeout
+      const content = this.textContent.trim();
+      console.log("Content length:", content.length);
+      console.log("Content starts with:", content.substring(0, 50) + '...');
+      console.log("Content:", content);
+      
+      if (!content) {
+        console.log("No content found");
+        this.shadowRoot.innerHTML = `
+          <style>
+            .anx-error {
+              color: #f56c6c;
+              background-color: #fef0f0;
+              border: 1px solid #fbc4c4;
+              padding: 12px;
+              border-radius: 4px;
+              font-size: 14px;
+            }
+          </style>
+          <div class="anx-error">No content found</div>
+        `;
+        return;
+      }
+      
+      // 尝试解析JSON，处理包含{{}}变量的情况
+      let component;
+      try {
+        component = JSON.parse(content);
+      } catch (jsonError) {
+        console.error("JSON parse error:", jsonError);
+        // 尝试修复JSON格式，处理{{}}变量
+        try {
+          // 暂时替换{{}}变量为占位符，解析完成后再恢复
+          const placeholderContent = content.replace(/\{\{([^{}]+)\}\}/g, "__ANX_VAR_$1__");
+          component = JSON.parse(placeholderContent);
+          // 恢复变量
+          const restoreVariables = (obj) => {
+            if (typeof obj === 'string') {
+              return obj.replace(/__ANX_VAR_([^_]+)__/g, "{{$1}}");
+            } else if (typeof obj === 'object' && obj !== null) {
+              for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                  obj[key] = restoreVariables(obj[key]);
+                }
+              }
+            }
+            return obj;
+          };
+          component = restoreVariables(component);
+        } catch (fixError) {
+          console.error("Failed to fix JSON:", fixError);
+          throw fixError;
+        }
+      }
+      
+      console.log("Parsed component:", component);
+      
+      // 渲染组件
+      const renderedContent = renderComponent(component);
+      this.shadowRoot.innerHTML = `
+        <style>
+          /* 基础样式重置 */
+          * {
+            box-sizing: border-box;
+          }
+          
+          /* 容器样式 */
+          .anx-container {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+          
+          /* 盒子样式 */
+          .anx-box {
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            margin: 10px 0;
+            overflow: hidden;
+            background-color: white;
+          }
+          
+          .anx-box-title {
+            background-color: #f0f0f0;
+            padding: 12px 15px;
+            font-weight: bold;
+            border-bottom: 1px solid #e8e8e8;
+            font-size: 16px;
+            color: #333;
+          }
+          
+          .anx-box-content {
+            padding: 15px;
+          }
+          
+          .anx-box-item {
+            border: 1px solid #e0e0e0;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 4px;
+            background-color: #fff;
+            transition: all 0.2s ease;
+          }
+          
+          .anx-box-item:hover {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-color: #409eff;
+          }
+          
+          /* 面板样式 */
+          .anx-board {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 4px;
+            border: 1px solid #e8e8e8;
+          }
+          
+          /* 文本样式 */
+          .anx-text {
+            padding: 12px;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.5;
+          }
+          
+          /* 输入框样式 */
+          .anx-input-wrapper {
+            margin: 10px 0;
+          }
+          
+          .anx-input {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+          }
+          
+          .anx-input:focus {
+            outline: none;
+            border-color: #409eff;
+            box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+          }
+          
+          /* 按钮样式 */
+          .anx-button {
+            padding: 10px 16px;
+            background-color: #409eff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+          }
+          
+          .anx-button:hover {
+            background-color: #66b1ff;
+          }
+          
+          .anx-button:active {
+            background-color: #3a8ee6;
+          }
+          
+          /* 错误样式 */
+          .anx-error {
+            color: #f56c6c;
+            background-color: #fef0f0;
+            border: 1px solid #fbc4c4;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 14px;
+          }
+          
+          /* 产品样式 */
+          .product {
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 4px;
+            background-color: white;
+            transition: all 0.2s ease;
+          }
+          
+          .product:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          }
+          
+          .product h2 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 8px;
+          }
+          
+          .price {
+            color: #f56c6c;
+            font-weight: bold;
+            font-size: 16px;
+          }
+        </style>
+        <div class="anx-container">${renderedContent}</div>
+      `;
+    } catch (error) {
+      console.error("Error:", error);
+      this.shadowRoot.innerHTML = `
+        <style>
+          .anx-error {
+            color: #f56c6c;
+            background-color: #fef0f0;
+            border: 1px solid #fbc4c4;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 14px;
+          }
+        </style>
+        <div class="anx-error">Invalid JSON: ${error.message}</div>
+      `;
+    }
+  }
+}
+
+// 注册自定义元素
+if (!customElements.get('anx-render')) {
+  customElements.define('anx-render', AnxComponentElement);
+  console.log('anx-render custom element registered');
+} else {
+  console.log('anx-render custom element already registered');
+}
