@@ -1,4 +1,6 @@
 function markedAnx() {
+  const renderAnx = require('./kind/anx');
+  
   const getPropertyValue = (obj, path) => {
     if (!obj || typeof obj !== 'object') return undefined;
     
@@ -57,6 +59,8 @@ function markedAnx() {
         return renderInput(component);
       case 'button':
         return renderButton(component);
+      case 'anx':
+        return renderAnx(component);
       default:
         return `<div class="anx-component anx-${component.kind}">${JSON.stringify(component)}</div>`;
     }
