@@ -1,5 +1,6 @@
+
+
 function markedAnx() {
-  const renderAnx = require('./kind/anx');
   
   const getPropertyValue = (obj, path) => {
     if (!obj || typeof obj !== 'object') return undefined;
@@ -59,8 +60,6 @@ function markedAnx() {
         return renderInput(component);
       case 'button':
         return renderButton(component);
-      case 'anx':
-        return renderAnx(component);
       default:
         return `<div class="anx-component anx-${component.kind}">${JSON.stringify(component)}</div>`;
     }
@@ -190,12 +189,19 @@ function markedAnx() {
         }
       }
       
-      // 处理 <anx> 标签语法
-      const anxTagMatch = text.match(/^<anx>(.*)<\/anx>$/s);
+      // 处理 <anx> 标签语法（更宽松的匹配，允许标签前后有空白）
+      const anxTagMatch = text.match(/<anx>([\s\S]*?)<\/anx>/s);
       if (anxTagMatch) {
         try {
           const component = JSON.parse(anxTagMatch[1]);
-          return `<div class="anx-container">${renderComponent(component)}</div>`;
+          // 替换 <anx> 标签为渲染后的内容
+          const renderedContent = `<div class="anx-container">${renderComponent(component)}</div>`;
+          const remainingText = text.replace(/<anx>[\s\S]*?<\/anx>/s, '').trim();
+          if (remainingText) {
+            return `<p>${remainingText}${renderedContent}</p>`;
+          } else {
+            return renderedContent;
+          }
         } catch (error) {
           console.error('ANX plugin error in <anx> tag:', error);
         }
@@ -230,6 +236,34 @@ function markedAnx() {
             return `<div class="anx-container">${renderComponent(component)}</div>`;
           } catch (error) {
             console.error('ANX plugin error in tokenizer:', error);
+            return `<div class="anx-container anx-error">Invalid JSON: ${error.message}</div>`;
+          }
+        }
+      },
+      {
+        name: 'anx-inline',
+        level: 'inline',
+        start: function(src) {
+          return src.match(/<anx>/i)?.index;
+        },
+        tokenizer: function(src, tokens) {
+          const match = src.match(/<anx>([\s\S]*?)<\/anx>/i);
+          if (match) {
+            return {
+              type: 'anx-inline',
+              raw: match[0],
+              content: match[1],
+              tokens: []
+            };
+          }
+          return false;
+        },
+        renderer: function(token) {
+          try {
+            const component = JSON.parse(token.content);
+            return `<div class="anx-container">${renderComponent(component)}</div>`;
+          } catch (error) {
+            console.error('ANX plugin error in inline tokenizer:', error);
             return `<div class="anx-container anx-error">Invalid JSON: ${error.message}</div>`;
           }
         }
