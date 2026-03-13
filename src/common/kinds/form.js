@@ -1,5 +1,5 @@
 // 处理form类型的组件
-import { renderComponent } from '../../common/renderers.js';
+import { renderComponent } from '../renderers.js';
 
 /**
  * 渲染form类型的组件

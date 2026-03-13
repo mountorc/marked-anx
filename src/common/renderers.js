@@ -122,5 +122,5 @@ export function renderButton(component) {
 }
 
 // 导入其他渲染器
-import { renderForm } from '../component/kinds/form.js';
+import { renderForm } from './kinds/form.js';
 import { parseTemplate } from './common.js';
