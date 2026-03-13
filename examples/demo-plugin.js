@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { marked } from 'marked';
 import markedAnx from '../src/index.js';
+import { renderComponent } from '../src/common/common.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,12 +18,25 @@ export function handlePluginDemo(req, res) {
     const testMarkdownPath = path.join(__dirname, 'demo.md');
     const testMarkdown = fs.readFileSync(testMarkdownPath, 'utf8');
     console.log('Markdown content (plugin):', testMarkdown);
-    const html = marked(testMarkdown, {
+    let html = marked(testMarkdown, {
       breaks: true,
       gfm: true,
       sanitize: false,
       renderer: renderer,
       extensions: extensions
+    });
+    
+    // 处理:::anx语法块
+    html = html.replace(/<p>:::anx<br>([\s\S]*?)<br>:::<\/p>/g, (match, content) => {
+      try {
+        // 移除<br>标签并解析JSON
+        const jsonContent = content.replace(/<br>/g, '\n').replace(/&quot;/g, '"');
+        const component = JSON.parse(jsonContent);
+        return `<div class="anx-container">${renderComponent(component)}</div>`;
+      } catch (error) {
+        console.error('ANX plugin error:', error);
+        return `<div class="anx-container"><div class="anx-error">Invalid JSON: ${error.message}</div></div>`;
+      }
     });
     console.log('Rendered HTML (plugin):', html);
   

@@ -15,17 +15,31 @@ const { renderer: componentRenderer, extensions: componentExtensions } = anxComp
 export function handleComponentDemo(req, res) {
   try {
     const testMarkdownPath = path.join(__dirname, 'demo.md');
-    const testMarkdown = fs.readFileSync(testMarkdownPath, 'utf8');
+    let testMarkdown = fs.readFileSync(testMarkdownPath, 'utf8');
     console.log('Markdown content (component):', testMarkdown);
     
     // 渲染Markdown
-    const html = marked(testMarkdown, { 
+    let html = marked(testMarkdown, { 
       breaks: true, 
       gfm: true, 
       sanitize: false,
       renderer: componentRenderer,
       extensions: componentExtensions
     });
+    
+    // 处理:::anx语法块
+    html = html.replace(/<p>:::anx<br>([\s\S]*?)<br>:::<\/p>/g, (match, content) => {
+      try {
+        // 移除<br>标签并解析JSON
+        const jsonContent = content.replace(/<br>/g, '\n').replace(/&quot;/g, '"');
+        const component = JSON.parse(jsonContent);
+        return `<anx-render>${JSON.stringify(component)}</anx-render>`;
+      } catch (error) {
+        console.error('ANX plugin error:', error);
+        return `<anx-render>{"kind": "text", "value": "Invalid JSON: ${error.message}"}</anx-render>`;
+      }
+    });
+    
     console.log('Rendered HTML (component):', html);
   
     res.send(`

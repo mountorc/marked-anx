@@ -19,12 +19,25 @@ export function handleComponentMjsDemo(req, res) {
     console.log('Markdown content (component mjs):', testMarkdown);
     
     // 渲染Markdown
-    const html = marked(testMarkdown, { 
+    let html = marked(testMarkdown, { 
       breaks: true, 
       gfm: true, 
       sanitize: false,
       renderer: renderer,
       extensions: extensions
+    });
+    
+    // 处理:::anx语法块
+    html = html.replace(/<p>:::anx<br>([\s\S]*?)<br>:::<\/p>/g, (match, content) => {
+      try {
+        // 移除<br>标签并解析JSON
+        const jsonContent = content.replace(/<br>/g, '\n').replace(/&quot;/g, '"');
+        const component = JSON.parse(jsonContent);
+        return `<anx-render>${JSON.stringify(component)}</anx-render>`;
+      } catch (error) {
+        console.error('ANX plugin error:', error);
+        return `<anx-render>{"kind": "text", "value": "Invalid JSON: ${error.message}"}</anx-render>`;
+      }
     });
     console.log('Rendered HTML (component mjs):', html);
   

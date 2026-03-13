@@ -2,17 +2,17 @@
 
 ## Box Component
 
-```anx
+:::anx
 {
   "kind": "box",
   "title": "Welcome",
   "html": "<p>Hello, {{user.name}}!</p>"
 }
-```
+:::
 
 ## Box with Data
 
-```anx
+:::anx
 {
   "kind": "box",
   "title": "Product List",
@@ -23,11 +23,11 @@
   ],
   "html": "<div class='product'><h2>{{name}}</h2><p class='price'>${{price}}</p></div>"
 }
-```
+:::
 
 ## Board Component
 
-```anx
+:::anx
 {
   "kind": "board",
   "kinds": [
@@ -37,46 +37,96 @@
     { "kind": "button", "label": "Submit", "action": "submitForm" }
   ]
 }
-```
+:::
 
 ## Text Component
 
-```anx
+:::anx
 {
   "kind": "text",
   "value": "This is a text component"
 }
-```
+:::
 
 ## Input Component
 
-```anx
+:::anx
 {
   "kind": "input",
   "placeholder": "Enter something",
   "value": "Initial value",
   "nick": "inputField"
 }
-```
+:::
 
 ## Button Component
 
-```anx
+:::anx
 {
   "kind": "button",
   "label": "Click Me",
   "action": "doSomething"
 }
-```
+:::
+
+## Form Component
+
+:::anx
+{
+  "kind": "form",
+  "title": "User Registration",
+  "kinds": [
+    {
+      "kind": "input",
+      "type": "string",
+      "nick": "username",
+      "title": "Username",
+      "defaultValue": "",
+      "must": true,
+      "placeholder": "请输入用户名",
+      "minLength": 3,
+      "maxLength": 20,
+      "description": "用户的登录名称"
+    },
+    {
+      "kind": "input",
+      "type": "number",
+      "nick": "age",
+      "title": "Age",
+      "defaultValue": 18,
+      "must": true,
+      "placeholder": "请输入年龄",
+      "description": "用户的年龄"
+    },
+    {
+      "kind": "input",
+      "type": "string",
+      "nick": "email",
+      "title": "Email",
+      "defaultValue": "",
+      "must": true,
+      "placeholder": "请输入邮箱",
+      "description": "用户的邮箱地址"
+    },
+    {
+      "kind": "button",
+      "label": "Submit",
+      "action": "submitForm"
+    }
+  ],
+  "action": "/submit-form",
+  "submitText": "Register"
+}
+:::
 
 ## Invalid JSON
 
-```anx
+:::anx
 {
   "kind": "box",
   "title": "Invalid JSON",
   "html": "This will cause an error"
 }
-```
+:::
 
 Regular text here

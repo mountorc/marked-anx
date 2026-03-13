@@ -5,7 +5,7 @@
 The marked-anx plugin is an extension for the marked library that enables the rendering of ANX (AI Native Ex) components within markdown files. ANX is an Agent-friendly frontend coding format designed to establish a unified standard for frontend interactions, following the specification from [https://github.com/mountorc/anx-protocol](https://github.com/mountorc/anx-protocol).
 
 ### Key Features
-- Support for ANX component syntax using ```anx``` code blocks
+- Support for ANX component syntax using :::anx code blocks
 - JSON-based component configuration
 - Dynamic rendering of various ANX component types
 - Template parsing with variable substitution
@@ -42,13 +42,13 @@ marked.use({
 const markdown = `
 # Test ANX Plugin
 
-\`\`\`anx
+:::anx
 {
   "kind": "box",
   "title": "Welcome",
   "html": "<p>Hello, {{user.name}}!</p>"
 }
-\`\`\`
+:::
 `;
 
 const html = marked(markdown);
@@ -78,13 +78,13 @@ marked.use({
 const markdown = `
 # Test ANX Plugin
 
-\`\`\`anx
+:::anx
 {
   "kind": "box",
   "title": "Welcome",
   "html": "<p>Hello, {{user.name}}!</p>"
 }
-\`\`\`
+:::
 `;
 
 // Render markdown to HTML
@@ -332,16 +332,16 @@ marked.setOptions({
 
 ### Component Rendering
 
-The plugin automatically renders ANX components enclosed in ```anx``` code blocks:
+The plugin automatically renders ANX components enclosed in :::anx code blocks:
 
 ```markdown
-\`\`\`anx
+:::anx
 {
   "kind": "component_type",
   "property1": "value1",
   "property2": "value2"
 }
-\`\`\`
+:::
 ```
 
 ## Troubleshooting
@@ -378,7 +378,7 @@ MIT License
 marked-anx 插件是 marked 库的扩展，用于在 markdown 文件中渲染 ANX（AI Native Ex）组件。ANX 是一种面向 Agent 的前端编码格式，旨在建立统一的前端交互标准，遵循 [https://github.com/mountorc/anx-protocol](https://github.com/mountorc/anx-protocol) 中的规范。
 
 ### 主要功能
-- 支持使用 ```anx``` 代码块的 ANX 组件语法
+- 支持使用 :::anx 代码块的 ANX 组件语法
 - 基于 JSON 的组件配置
 - 各种 ANX 组件类型的动态渲染
 - 带变量替换的模板解析
@@ -415,13 +415,13 @@ marked.use({
 const markdown = `
 # 测试 ANX 插件
 
-\`\`\`anx
+:::anx
 {
   "kind": "box",
   "title": "欢迎",
   "html": "<p>你好，{{user.name}}！</p>"
 }
-\`\`\`
+:::
 `;
 
 const html = marked(markdown);
@@ -451,13 +451,13 @@ marked.use({
 const markdown = `
 # 测试 ANX 插件
 
-\`\`\`anx
+:::anx
 {
   "kind": "box",
   "title": "欢迎",
   "html": "<p>你好，{{user.name}}！</p>"
 }
-\`\`\`
+:::
 `;
 
 // 将 markdown 渲染为 HTML

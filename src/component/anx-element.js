@@ -223,6 +223,52 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof H
               font-weight: bold;
               font-size: 16px;
             }
+            
+            /* 表单样式 */
+            .anx-form {
+              display: flex;
+              flex-direction: column;
+              gap: 16px;
+              padding: 15px;
+              background-color: white;
+              border-radius: 4px;
+              border: 1px solid #e8e8e8;
+            }
+            
+            .anx-form-title {
+              font-size: 18px;
+              font-weight: bold;
+              color: #333;
+              margin: 0 0 10px 0;
+            }
+            
+            .anx-form-item {
+              display: flex;
+              flex-direction: column;
+              gap: 8px;
+            }
+            
+            .anx-form-label {
+              font-size: 14px;
+              font-weight: 500;
+              color: #333;
+            }
+            
+            .anx-form-content {
+              width: 100%;
+            }
+            
+            .anx-form-description {
+              font-size: 12px;
+              color: #999;
+              margin-top: 4px;
+            }
+            
+            .anx-form-actions {
+              display: flex;
+              justify-content: flex-end;
+              margin-top: 10px;
+            }
           </style>
           <div class="anx-container">${renderedContent}</div>
         `;

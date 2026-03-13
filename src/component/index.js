@@ -52,13 +52,7 @@ function markedAnxComponent() {
       return originalCode.call(this, code, infostring, escaped);
     };
     
-    // 处理段落中的ANX语法
-    renderer.paragraph = function(token) {
-      let text = token.text || '';
-      return originalParagraph ? originalParagraph.call(this, token) : `<p>${text}</p>`;
-    };
-    
-    // 添加tokenizer支持
+    // 直接在marked对象上添加扩展
     const extensions = [
       {
         name: 'anx',
@@ -89,6 +83,17 @@ function markedAnxComponent() {
         }
       }
     ];
+    
+    // 确保marked对象有extensions属性
+    if (!marked.options) {
+      marked.options = {};
+    }
+    if (!marked.options.extensions) {
+      marked.options.extensions = [];
+    }
+    
+    // 添加ANX扩展
+    marked.options.extensions.push(...extensions);
     
     return { renderer, extensions };
   };
