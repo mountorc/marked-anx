@@ -274,18 +274,23 @@ The plugin supports variable substitution in templates using the following synta
 
 ## Testing
 
-The project includes a demo server for previewing ANX components:
+The project includes a unified demo server for previewing all ANX components:
 
 1. Start the demo server:
    ```bash
-   npm start
+   node examples/server.js
    ```
 
-2. Open your browser and navigate to `http://localhost:3001`
+2. Open your browser and navigate to `http://localhost:4664`
 
-3. Modify the `examples/demo.md` file to test different ANX components
+3. You can access different demos:
+   - `http://localhost:4664/plugin` - Uses marked-anx plugin directly (renders native components)
+   - `http://localhost:4664/element` - Uses `<anx-render>` element directly
+   - `http://localhost:4664/component` - Uses marked-anx component plugin with `<anx-render>` elements
 
-4. Refresh the browser to see changes (no server restart required)
+4. Modify the `examples/demo.md` file to test different ANX components
+
+5. Refresh the browser to see changes (no server restart required)
 
 ## Project Structure
 
@@ -293,13 +298,18 @@ The project includes a demo server for previewing ANX components:
 marked-anx/
 ├── src/              # Source code
 │   ├── plugin/       # Marked plugin implementation
-│   │   └── index.js  # Main plugin code
+│   │   └── index.js  # Main plugin code (renders native components)
 │   ├── component/    # ANX component implementation
-│   │   └── anx-element.js  # Custom element code
+│   │   ├── anx-element.js  # Custom element code
+│   │   └── index.js  # Marked plugin that uses <anx-render> elements
+│   ├── common/       # Shared utility functions
+│   │   └── common.js # Common rendering functions
 │   └── index.js      # Main entry point
 ├── examples/         # Example files
-│   ├── demo.js       # Demo server using the plugin
-│   ├── demo-plugin.js # Demo server using the component directly
+│   ├── server.js     # Unified demo server (port 4664)
+│   ├── demo-plugin.js # Plugin demo handler
+│   ├── demo-component.js # Component demo handler
+│   ├── demo-element.html # Element demo file
 │   └── demo.md       # Demo markdown file
 ├── READER.md         # This documentation
 ├── package.json      # Project configuration
@@ -622,18 +632,23 @@ ANX 组件可以在没有 marked 插件的情况下直接在 HTML 中使用。�
 
 ## 测试
 
-项目包含一个演示服务器，用于预览 ANX 组件：
+项目包含一个统一的演示服务器，用于预览所有 ANX 组件：
 
 1. 启动演示服务器：
    ```bash
-   npm start
+   node examples/server.js
    ```
 
-2. 打开浏览器并导航到 `http://localhost:3001`
+2. 打开浏览器并导航到 `http://localhost:4664`
 
-3. 修改 `examples/demo.md` 文件来测试不同的 ANX 组件
+3. 你可以访问不同的演示：
+   - `http://localhost:4664/plugin` - 直接使用 marked-anx 插件（渲染原生组件）
+   - `http://localhost:4664/element` - 直接使用 `<anx-render>` 元素
+   - `http://localhost:4664/component` - 使用带有 `<anx-render>` 元素的 marked-anx 组件插件
 
-4. 刷新浏览器查看更改（无需重启服务器）
+4. 修改 `examples/demo.md` 文件来测试不同的 ANX 组件
+
+5. 刷新浏览器查看更改（无需重启服务器）
 
 ## 项目结构
 
@@ -641,13 +656,18 @@ ANX 组件可以在没有 marked 插件的情况下直接在 HTML 中使用。�
 marked-anx/
 ├── src/              # 源码
 │   ├── plugin/       # Marked 插件实现
-│   │   └── index.js  # 插件主代码
+│   │   └── index.js  # 插件主代码（渲染原生组件）
 │   ├── component/    # ANX 组件实现
-│   │   └── anx-element.js  # 自定义元素代码
+│   │   ├── anx-element.js  # 自定义元素代码
+│   │   └── index.js  # 使用 <anx-render> 元素的 Marked 插件
+│   ├── common/       # 共享工具函数
+│   │   └── common.js # 通用渲染函数
 │   └── index.js      # 主入口点
 ├── examples/         # 示例文件
-│   ├── demo.js       # 使用插件的演示服务器
-│   ├── demo-plugin.js # 直接使用组件的演示服务器
+│   ├── server.js     # 统一演示服务器（端口 4664）
+│   ├── demo-plugin.js # 插件演示处理程序
+│   ├── demo-component.js # 组件演示处理程序
+│   ├── demo-element.html # 元素演示文件
 │   └── demo.md       # 演示 markdown 文件
 ├── READER.md         # 本文档
 ├── package.json      # 项目配置

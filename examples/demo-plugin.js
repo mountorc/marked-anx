@@ -1,4 +1,3 @@
-import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -8,29 +7,30 @@ import markedAnx from '../src/index.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
-const port = 3001;
-
+// 初始化plugin demo - 使用plugin版本的渲染
 const anxPlugin = markedAnx();
 const { renderer, extensions } = anxPlugin(marked);
-marked.use({
-  renderer: renderer,
-  extensions: extensions
-});
 
-app.get('/', (req, res) => {
+// plugin demo处理函数
+export function handlePluginDemo(req, res) {
   try {
     const testMarkdownPath = path.join(__dirname, 'demo.md');
     const testMarkdown = fs.readFileSync(testMarkdownPath, 'utf8');
-    console.log('Markdown content:', testMarkdown);
-    const html = marked(testMarkdown);
-    console.log('Rendered HTML:', html);
+    console.log('Markdown content (plugin):', testMarkdown);
+    const html = marked(testMarkdown, {
+      breaks: true,
+      gfm: true,
+      sanitize: false,
+      renderer: renderer,
+      extensions: extensions
+    });
+    console.log('Rendered HTML (plugin):', html);
   
     res.send(`
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ANX Plugin Test</title>
+  <title>ANX Plugin Demo</title>
   <style>
     body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: white; color: black; }
     h1, h2 { color: #333; }
@@ -118,8 +118,9 @@ app.get('/', (req, res) => {
   </style>
 </head>
 <body>
-  <h1>Test Page</h1>
-  <p>Hello World!</p>
+  <h1>ANX Plugin Demo</h1>
+  <p>This demo uses the marked-anx plugin directly.</p>
+  <p><a href="/">Home</a> | <a href="/plugin">Plugin Demo</a> | <a href="/element">Element Demo</a> | <a href="/component">Component Demo</a></p>
   ${html}
 </body>
 </html>
@@ -143,8 +144,4 @@ app.get('/', (req, res) => {
 </html>
     `);
   }
-});
-
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+}

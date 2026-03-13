@@ -36,10 +36,10 @@ function markedAnx() {
           } else {
             component = JSON.parse(code);
           }
-          return `<anx-render>${JSON.stringify(component)}</anx-render>`;
+          return `<div class="anx-container">${renderComponent(component)}</div>`;
         } catch (error) {
           console.error('ANX plugin error:', error);
-          return `<anx-render>{"kind": "text", "value": "Invalid JSON: ${error.message}"}</anx-render>`;
+          return `<div class="anx-container"><div class="anx-error">Invalid JSON: ${error.message}</div></div>`;
         }
       }
       return originalCode.call(this, code, infostring, escaped);
@@ -74,10 +74,10 @@ function markedAnx() {
         renderer: function(token) {
           try {
             const component = JSON.parse(token.content);
-            return `<anx-render>${JSON.stringify(component)}</anx-render>`;
+            return `<div class="anx-container">${renderComponent(component)}</div>`;
           } catch (error) {
             console.error('ANX plugin error in tokenizer:', error);
-            return `<anx-render>{"kind": "text", "value": "Invalid JSON: ${error.message}"}</anx-render>`;
+            return `<div class="anx-container"><div class="anx-error">Invalid JSON: ${error.message}</div></div>`;
           }
         }
       }
