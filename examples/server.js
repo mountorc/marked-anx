@@ -8,6 +8,7 @@ import express from 'express';
 import { marked } from 'marked';
 import { handlePluginDemo } from './demo-plugin.js';
 import { handleComponentDemo } from './demo-component.js';
+import { handleComponentMjsDemo } from './demo-component-mjs.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,6 +24,9 @@ app.get('/plugin', handlePluginDemo);
 
 // component demo路径 - 使用handleComponentDemo函数
 app.get('/component', handleComponentDemo);
+
+// component mjs demo路径 - 使用handleComponentMjsDemo函数
+app.get('/component-mjs', handleComponentMjsDemo);
 
 // element demo路径
 app.get('/element', (req, res) => {
@@ -75,12 +79,14 @@ app.get('/', (req, res) => {
     <a href="/plugin">Plugin Demo</a>
     <a href="/element">Element Demo</a>
     <a href="/component">Component Demo</a>
+    <a href="/component-mjs">Component MJS Demo</a>
   </div>
   <h2>Demos:</h2>
   <ul>
     <li><strong>/plugin</strong> - Uses marked-anx plugin directly</li>
     <li><strong>/element</strong> - Uses &lt;anx-render&gt; element directly</li>
     <li><strong>/component</strong> - Uses marked-anx component plugin with &lt;anx-render&gt; elements</li>
+    <li><strong>/component-mjs</strong> - Uses marked-anx-component.mjs ES module</li>
   </ul>
 </body>
 </html>
@@ -93,4 +99,5 @@ app.listen(port, () => {
   console.log(`Plugin Demo: http://localhost:${port}/plugin`);
   console.log(`Element Demo: http://localhost:${port}/element`);
   console.log(`Component Demo: http://localhost:${port}/component`);
+  console.log(`Component MJS Demo: http://localhost:${port}/component-mjs`);
 });
