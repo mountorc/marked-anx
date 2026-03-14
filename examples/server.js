@@ -9,6 +9,7 @@ import { marked } from 'marked';
 import { handlePluginDemo } from './demo-plugin.js';
 import { handleComponentDemo } from './demo-component.js';
 import { handleComponentMjsDemo } from './demo-component-mjs.js';
+import { handleEditorDemo } from './demo-editor.js';
 import markedAnxComponent from '../src/component/index.js';
 
 // 初始化插件
@@ -19,7 +20,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const port = 4664;
+const port = 4665;
 
 // 提供静态文件服务
 app.use(express.static(__dirname + '/../'));
@@ -32,6 +33,9 @@ app.get('/component', handleComponentDemo);
 
 // component mjs demo路径 - 使用handleComponentMjsDemo函数
 app.get('/component-mjs', handleComponentMjsDemo);
+
+// editor demo路径
+app.get('/editor', handleEditorDemo);
 
 // form demo路径
 app.get('/form', (req, res) => {
@@ -154,6 +158,7 @@ app.get('/', (req, res) => {
     <a href="/component">Component Demo</a>
     <a href="/component-mjs">Component MJS Demo</a>
     <a href="/form">Form Demo</a>
+    <a href="/editor">Editor Demo</a>
   </div>
   <h2>Demos:</h2>
   <ul>
@@ -162,6 +167,7 @@ app.get('/', (req, res) => {
     <li><strong>/component</strong> - Uses marked-anx component plugin with &lt;anx-render&gt; elements</li>
     <li><strong>/component-mjs</strong> - Uses marked-anx-component.mjs ES module</li>
     <li><strong>/form</strong> - Tests the form component</li>
+    <li><strong>/editor</strong> - Markdown editor with live preview</li>
   </ul>
 </body>
 </html>
@@ -176,4 +182,5 @@ app.listen(port, () => {
   console.log(`Component Demo: http://localhost:${port}/component`);
   console.log(`Component MJS Demo: http://localhost:${port}/component-mjs`);
   console.log(`Form Demo: http://localhost:${port}/form`);
+  console.log(`Editor Demo: http://localhost:${port}/editor`);
 });

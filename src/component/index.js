@@ -1,10 +1,7 @@
 // ANX component plugin for marked
 // This plugin converts ANX syntax to <anx-render> elements for visual rendering
 
-// Import anx-element.js to register the custom element only in browser environment
-if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-  import('./anx-element.js');
-}
+
 
 /**
  * ANX component plugin for marked
