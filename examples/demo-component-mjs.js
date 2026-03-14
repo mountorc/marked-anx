@@ -131,7 +131,7 @@ export function handleComponentMjsDemo(req, res) {
       font-weight: bold; 
     }
   </style>
-  <script type="module" src="../dist/anx-element.mjs"></script>
+
 </head>
 <body>
   <h1>ANX Component MJS Demo</h1>
