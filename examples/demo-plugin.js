@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { marked } from 'marked';
 import markedAnx from '../src/index.js';
 import { renderComponent } from '../src/common/common.js';
+import { generateNavigation } from './demo-navigation.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,102 +41,205 @@ export function handlePluginDemo(req, res) {
     });
     console.log('Rendered HTML (plugin):', html);
   
+    // 生成导航栏HTML
+    const navHTML = generateNavigation('/plugin');
+    
     res.send(`
 <!DOCTYPE html>
 <html>
 <head>
   <title>ANX Plugin Demo</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: white; color: black; }
-    h1, h2 { color: #333; }
-    .anx-container { 
-      border: 1px solid #ddd; 
-      padding: 15px; 
-      margin: 20px 0; 
-      background-color: #f9f9f9; 
-      border-radius: 4px; 
+    /* 全局样式 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    .anx-box { 
-      border: 1px solid #e8e8e8; 
-      border-radius: 8px; 
-      margin: 10px 0; 
-      overflow: hidden; 
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
     }
-    .anx-box-title { 
-      background-color: #f0f0f0; 
-      padding: 10px 15px; 
-      font-weight: bold; 
-      border-bottom: 1px solid #e8e8e8; 
+    
+    /* 导航栏样式 */
+    .anx-nav {
+      background-color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 0 20px;
     }
-    .anx-box-content { 
-      padding: 15px; 
+    .anx-nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 60px;
     }
-    .anx-box-item { 
-      border: 1px solid #e0e0e0; 
-      padding: 10px; 
-      margin: 5px 0; 
-      border-radius: 4px; 
-      background-color: #fff; 
+    .anx-nav-logo {
+      font-size: 18px;
+      font-weight: bold;
+      color: #409eff;
+      text-decoration: none;
     }
-    .anx-board { 
-      display: flex; 
-      flex-direction: column; 
-      gap: 10px; 
-      padding: 10px; 
+    .anx-nav-menu {
+      display: flex;
+      list-style: none;
     }
-    .anx-text { 
-      padding: 10px; 
-      color: #333; 
+    .anx-nav-item {
+      margin-left: 20px;
+      position: relative;
     }
-    .anx-input-wrapper { 
-      margin: 10px 0; 
+    .anx-nav-link {
+      display: block;
+      padding: 8px 12px;
+      color: #606266;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: all 0.3s ease;
     }
-    .anx-input { 
-      padding: 8px 12px; 
-      border: 1px solid #ddd; 
-      border-radius: 4px; 
-      width: 100%; 
-      box-sizing: border-box; 
+    .anx-nav-link:hover {
+      color: #409eff;
+      background-color: #ecf5ff;
     }
-    .anx-button { 
-      padding: 8px 16px; 
-      background-color: #409eff; 
-      color: white; 
-      border: none; 
-      border-radius: 4px; 
-      cursor: pointer; 
+    .anx-nav-link.active {
+      color: #409eff;
+      font-weight: 500;
+      background-color: #ecf5ff;
     }
-    .anx-button:hover { 
-      background-color: #66b1ff; 
+    
+    /* 内容样式 */
+    .content {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
     }
-    .anx-error { 
-      color: #f56c6c; 
-      background-color: #fef0f0; 
-      border: 1px solid #fbc4c4; 
-      padding: 10px; 
-      border-radius: 4px; 
+    .content-header {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e4e7ed;
     }
-    .product { 
-      border: 1px solid #e0e0e0; 
-      padding: 10px; 
-      margin: 5px 0; 
-      border-radius: 4px; 
+    .content-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #303133;
+      margin-bottom: 10px;
     }
-    .product h2 { 
-      margin-top: 0; 
-      font-size: 18px; 
+    .content-header p {
+      color: #606266;
+      font-size: 14px;
     }
-    .price { 
-      color: #f56c6c; 
-      font-weight: bold; 
+    
+    /* ANX组件样式 */
+    .anx-container {
+      border: 1px solid #e4e7ed;
+      padding: 20px;
+      margin: 20px 0;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .anx-box {
+      border: 1px solid #e4e7ed;
+      border-radius: 8px;
+      margin: 16px 0;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+    .anx-box-title {
+      background-color: #f5f7fa;
+      padding: 12px 16px;
+      font-weight: 600;
+      border-bottom: 1px solid #e4e7ed;
+      color: #303133;
+    }
+    .anx-box-content {
+      padding: 16px;
+    }
+    .anx-box-item {
+      border: 1px solid #ebeef5;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 4px;
+      background-color: #ffffff;
+    }
+    .anx-board {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 12px;
+    }
+    .anx-text {
+      padding: 12px;
+      color: #303133;
+    }
+    .anx-input-wrapper {
+      margin: 12px 0;
+    }
+    .anx-input {
+      padding: 10px 14px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      width: 100%;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+    .anx-input:focus {
+      outline: none;
+      border-color: #409eff;
+      box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+    }
+    .anx-button {
+      padding: 10px 20px;
+      background-color: #409eff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .anx-button:hover {
+      background-color: #66b1ff;
+    }
+    .anx-error {
+      color: #f56c6c;
+      background-color: #fef0f0;
+      border: 1px solid #fbc4c4;
+      padding: 12px;
+      border-radius: 4px;
+      margin: 12px 0;
+    }
+    .product {
+      border: 1px solid #ebeef5;
+      padding: 16px;
+      margin: 12px 0;
+      border-radius: 8px;
+      background-color: #ffffff;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+    .product h2 {
+      margin-top: 0;
+      font-size: 18px;
+      color: #303133;
+    }
+    .price {
+      color: #f56c6c;
+      font-weight: bold;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
-  <h1>ANX Plugin Demo</h1>
-  <p>This demo uses the marked-anx plugin directly.</p>
-  <p><a href="/">Home</a> | <a href="/plugin">Plugin Demo</a> | <a href="/element">Element Demo</a> | <a href="/component">Component Demo</a></p>
-  ${html}
+${navHTML}
+  <div class="content">
+    <div class="content-header">
+      <h1>ANX Plugin Demo</h1>
+      <p>This demo uses the marked-anx plugin directly.</p>
+    </div>
+    ${html}
+  </div>
 </body>
 </html>
     `);

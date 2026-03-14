@@ -10,6 +10,8 @@ import { handlePluginDemo } from './demo-plugin.js';
 import { handleComponentDemo } from './demo-component.js';
 import { handleComponentMjsDemo } from './demo-component-mjs.js';
 import { handleEditorDemo } from './demo-editor.js';
+import { generateNavigation } from './demo-navigation.js';
+import navigationConfig from './demo-navigation.js';
 import markedAnxComponent from '../src/component/index.js';
 
 // 初始化插件
@@ -65,22 +67,118 @@ app.get('/form', (req, res) => {
       }
     });
   
+    // 生成导航栏HTML
+    const navHTML = generateNavigation('/form');
+    
     res.send(`
 <!DOCTYPE html>
 <html>
 <head>
   <title>ANX Form Demo</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: white; color: black; }
-    h1, h2 { color: #333; }
+    /* 全局样式 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    
+    /* 导航栏样式 */
+    .anx-nav {
+      background-color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 0 20px;
+    }
+    .anx-nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 60px;
+    }
+    .anx-nav-logo {
+      font-size: 18px;
+      font-weight: bold;
+      color: #409eff;
+      text-decoration: none;
+    }
+    .anx-nav-menu {
+      display: flex;
+      list-style: none;
+    }
+    .anx-nav-item {
+      margin-left: 20px;
+      position: relative;
+    }
+    .anx-nav-link {
+      display: block;
+      padding: 8px 12px;
+      color: #606266;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    .anx-nav-link:hover {
+      color: #409eff;
+      background-color: #ecf5ff;
+    }
+    .anx-nav-link.active {
+      color: #409eff;
+      font-weight: 500;
+      background-color: #ecf5ff;
+    }
+    
+    /* 内容样式 */
+    .content {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .content-header {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e4e7ed;
+    }
+    .content-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #303133;
+      margin-bottom: 10px;
+    }
+    .content-header p {
+      color: #606266;
+      font-size: 14px;
+    }
+    
+    /* ANX组件样式 */
+    .anx-container {
+      border: 1px solid #e4e7ed;
+      padding: 20px;
+      margin: 20px 0;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
   </style>
   <script type="module" src="../src/component/anx-element.js"></script>
 </head>
 <body>
-  <h1>ANX Form Demo</h1>
-  <p>This demo tests the form component.</p>
-  <p><a href="/">Home</a> | <a href="/plugin">Plugin Demo</a> | <a href="/element">Element Demo</a> | <a href="/component">Component Demo</a> | <a href="/component-mjs">Component MJS Demo</a> | <a href="/form">Form Demo</a></p>
-  ${html}
+${navHTML}
+  <div class="content">
+    <div class="content-header">
+      <h1>ANX Form Demo</h1>
+      <p>This demo tests the form component.</p>
+    </div>
+    ${html}
+  </div>
 </body>
 </html>
     `);
@@ -135,40 +233,168 @@ app.get('/element', (req, res) => {
 
 // 首页
 app.get('/', (req, res) => {
+  // 生成导航栏HTML
+  const navHTML = generateNavigation('/');
+  
   res.send(`
 <!DOCTYPE html>
 <html>
 <head>
   <title>ANX Demo</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: white; color: black; }
-    h1 { color: #333; }
-    .nav { margin: 20px 0; }
-    .nav a { margin-right: 10px; padding: 8px 16px; background-color: #409eff; color: white; text-decoration: none; border-radius: 4px; }
-    .nav a:hover { background-color: #66b1ff; }
+    /* 全局样式 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    
+    /* 导航栏样式 */
+    .anx-nav {
+      background-color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 0 20px;
+    }
+    .anx-nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 60px;
+    }
+    .anx-nav-logo {
+      font-size: 18px;
+      font-weight: bold;
+      color: #409eff;
+      text-decoration: none;
+    }
+    .anx-nav-menu {
+      display: flex;
+      list-style: none;
+    }
+    .anx-nav-item {
+      margin-left: 20px;
+      position: relative;
+    }
+    .anx-nav-link {
+      display: block;
+      padding: 8px 12px;
+      color: #606266;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    .anx-nav-link:hover {
+      color: #409eff;
+      background-color: #ecf5ff;
+    }
+    .anx-nav-link.active {
+      color: #409eff;
+      font-weight: 500;
+      background-color: #ecf5ff;
+    }
+    
+    /* 内容样式 */
+    .content {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .content-header {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e4e7ed;
+    }
+    .content-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #303133;
+      margin-bottom: 10px;
+    }
+    .content-header p {
+      color: #606266;
+      font-size: 14px;
+    }
+    
+    /* 演示列表样式 */
+    .demo-list {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .demo-list h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #303133;
+      margin-bottom: 15px;
+    }
+    .demo-list ul {
+      list-style: none;
+      padding: 0;
+    }
+    .demo-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .demo-list li:last-child {
+      border-bottom: none;
+    }
+    .demo-list strong {
+      color: #409eff;
+    }
   </style>
 </head>
 <body>
-  <h1>ANX Demo</h1>
-  <p>Welcome to the ANX demo page!</p>
-  <div class="nav">
-    <a href="/">Home</a>
-    <a href="/plugin">Plugin Demo</a>
-    <a href="/element">Element Demo</a>
-    <a href="/component">Component Demo</a>
-    <a href="/component-mjs">Component MJS Demo</a>
-    <a href="/form">Form Demo</a>
-    <a href="/editor">Editor Demo</a>
+${navHTML}
+  <div class="content">
+    <div class="content-header">
+      <h1>marked-ANX-demo</h1>
+      <p>Welcome to the marked-ANX-demo page!</p>
+    </div>
+    <div class="demo-list">
+      <h2>Demos:</h2>
+      <ul>
+        ${navigationConfig.map(item => {
+          let description = '';
+          switch(item.url_page) {
+            case '/':
+              description = 'Home page with demo list';
+              break;
+            case '/plugin':
+              description = 'Uses marked-anx plugin directly';
+              break;
+            case '/element':
+              description = 'Uses &lt;anx-render&gt; element directly';
+              break;
+            case '/component':
+              description = 'Uses marked-anx component plugin with &lt;anx-render&gt; elements';
+              break;
+            case '/component-mjs':
+              description = 'Uses marked-anx-component.mjs ES module';
+              break;
+            case '/form':
+              description = 'Tests the form component';
+              break;
+            case '/editor':
+              description = 'Markdown editor with live preview';
+              break;
+            default:
+              description = '';
+          }
+          return `<li><strong>${item.url_page}</strong> - ${description}</li>`;
+        }).join('')}
+      </ul>
+    </div>
   </div>
-  <h2>Demos:</h2>
-  <ul>
-    <li><strong>/plugin</strong> - Uses marked-anx plugin directly</li>
-    <li><strong>/element</strong> - Uses &lt;anx-render&gt; element directly</li>
-    <li><strong>/component</strong> - Uses marked-anx component plugin with &lt;anx-render&gt; elements</li>
-    <li><strong>/component-mjs</strong> - Uses marked-anx-component.mjs ES module</li>
-    <li><strong>/form</strong> - Tests the form component</li>
-    <li><strong>/editor</strong> - Markdown editor with live preview</li>
-  </ul>
 </body>
 </html>
   `);

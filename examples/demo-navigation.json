@@ -1,0 +1,44 @@
+[
+  {
+    "title": "Home",
+    "nick": "home",
+    "uuid_page": "home_123",
+    "url_page": "/"
+  },
+  {
+    "title": "Plugin Demo",
+    "nick": "plugin",
+    "uuid_page": "plugin_456",
+    "url_page": "/plugin"
+  },
+  {
+    "title": "Element Demo",
+    "nick": "element",
+    "uuid_page": "element_789",
+    "url_page": "/element"
+  },
+  {
+    "title": "Component Demo",
+    "nick": "component",
+    "uuid_page": "component_101",
+    "url_page": "/component"
+  },
+  {
+    "title": "Component MJS Demo",
+    "nick": "component_mjs",
+    "uuid_page": "component_mjs_102",
+    "url_page": "/component-mjs"
+  },
+  {
+    "title": "Form Demo",
+    "nick": "form",
+    "uuid_page": "form_103",
+    "url_page": "/form"
+  },
+  {
+    "title": "Editor Demo",
+    "nick": "editor",
+    "uuid_page": "editor_104",
+    "url_page": "/editor"
+  }
+]
