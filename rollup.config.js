@@ -44,6 +44,16 @@ export default [
   {
     input: 'src/component/anx-element.js',
     output: {
+      file: 'dist/anx-element.cjs',
+      format: 'cjs',
+      sourcemap: false,
+      inlineDynamicImports: true
+    },
+    plugins: [terser()]
+  },
+  {
+    input: 'src/component/anx-element.js',
+    output: {
       file: 'dist/anx-element.mjs',
       format: 'esm',
       sourcemap: false,

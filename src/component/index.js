@@ -3,7 +3,7 @@
 
 // Import anx-element.js to register the custom element only in browser environment
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-  import('../../dist/anx-element.mjs');
+  import('./anx-element.js');
 }
 
 /**
