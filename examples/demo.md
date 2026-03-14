@@ -16,7 +16,8 @@
 {
   "kind": "box",
   "title": "Product List",
-  "data": [
+  "dataset":{"url_dataset":"http://localhost:4665/dataset"}
+  "data-stop": [
     { "name": "Product 1", "price": 100 },
     { "name": "Product 2", "price": 28000 },
     { "name": "Product 3", "price": 300 }

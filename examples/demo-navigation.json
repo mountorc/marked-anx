@@ -40,5 +40,11 @@
     "nick": "editor",
     "uuid_page": "editor_104",
     "url_page": "/editor"
+  },
+  {
+    "title": "Dataset Demo",
+    "nick": "dataset",
+    "uuid_page": "dataset_105",
+    "url_page": "/dataset"
   }
 ]

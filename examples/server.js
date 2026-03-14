@@ -10,6 +10,7 @@ import { handlePluginDemo } from './demo-plugin.js';
 import { handleComponentDemo } from './demo-component.js';
 import { handleComponentMjsDemo } from './demo-component-mjs.js';
 import { handleEditorDemo } from './demo-editor.js';
+import { handleDatasetDemo } from './demo-dataset.js';
 import { generateNavigation } from './demo-navigation.js';
 import navigationConfig from './demo-navigation.js';
 import markedAnxComponent from '../src/component/index.js';
@@ -38,6 +39,9 @@ app.get('/component-mjs', handleComponentMjsDemo);
 
 // editor demo路径
 app.get('/editor', handleEditorDemo);
+
+// dataset demo路径
+app.get('/dataset', handleDatasetDemo);
 
 // form demo路径
 app.get('/form', (req, res) => {
@@ -387,6 +391,9 @@ ${navHTML}
             case '/editor':
               description = 'Markdown editor with live preview';
               break;
+            case '/dataset':
+              description = 'Returns mock dataset in {"data":[]} format';
+              break;
             default:
               description = '';
           }
@@ -409,4 +416,5 @@ app.listen(port, () => {
   console.log(`Component MJS Demo: http://localhost:${port}/component-mjs`);
   console.log(`Form Demo: http://localhost:${port}/form`);
   console.log(`Editor Demo: http://localhost:${port}/editor`);
+  console.log(`Dataset Demo: http://localhost:${port}/dataset`);
 });
