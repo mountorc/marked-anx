@@ -66,13 +66,6 @@
       "description": "Marked ANX component demo"
     },
     {
-      "title": "Component Usage Demo",
-      "nick": "component_usage_demo",
-      "uuid_page": "component_usage_demo_108",
-      "url_page": "/demo-component-usage",
-      "description": "Component usage demo"
-    },
-    {
       "title": "Navigation Test",
       "nick": "navigation_test",
       "uuid_page": "navigation_test_106",

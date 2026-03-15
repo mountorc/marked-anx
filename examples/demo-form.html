@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ANX Form Demo</title>
+  <style>
+    /* 全局样式 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    
+    /* 内容样式 */
+    .content {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .content-header {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e4e7ed;
+    }
+    .content-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #303133;
+      margin-bottom: 10px;
+    }
+    .content-header p {
+      color: #606266;
+      font-size: 14px;
+    }
+    
+    /* ANX组件样式 */
+    .anx-container {
+      border: 1px solid #e4e7ed;
+      padding: 20px;
+      margin: 20px 0;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+  </style>
+  <script type="module" src="../src/component/anx-element.js"></script>
+  <script type="module" src="./marked-anx-component.js"></script>
+</head>
+<body>
+  <anx-render auto-set='{"showMode":"header"}' value="form" src="http://localhost:4665/anx/config/navigation"></anx-render>
+  <div class="content">
+    <div class="content-header">
+      <h1>ANX Form Demo</h1>
+      <p>This demo tests the form component.</p>
+    </div>
+    <marked-anx>
+# Test Form Component
+
+## Form Component
+
+:::anx
+{
+  "kind": "form",
+  "title": "User Registration",
+  "kinds": [
+    {
+      "kind": "input",
+      "type": "string",
+      "nick": "username",
+      "title": "Username",
+      "defaultValue": "",
+      "must": true,
+      "placeholder": "请输入用户名",
+      "minLength": 3,
+      "maxLength": 20,
+      "description": "用户的登录名称"
+    },
+    {
+      "kind": "input",
+      "type": "number",
+      "nick": "age",
+      "title": "Age",
+      "defaultValue": 18,
+      "must": true,
+      "placeholder": "请输入年龄",
+      "description": "用户的年龄"
+    },
+    {
+      "kind": "input",
+      "type": "string",
+      "nick": "email",
+      "title": "Email",
+      "defaultValue": "",
+      "must": true,
+      "placeholder": "请输入邮箱",
+      "description": "用户的邮箱地址"
+    },
+    {
+      "kind": "button",
+      "label": "Submit",
+      "action": "submitForm"
+    }
+  ],
+  "action": "/submit-form",
+  "submitText": "Register"
+}
+:::
+    </marked-anx>
+  </div>
+</body>
+</html>

@@ -247,7 +247,7 @@ class MarkedAnx extends HTMLElement {
   }
 
   processAnxBlocks(markdown, marked, renderer, extensions) {
-    // 渲染Markdown
+    // 首先渲染Markdown
     let html = marked(markdown, {
       breaks: true,
       gfm: true,
@@ -257,31 +257,27 @@ class MarkedAnx extends HTMLElement {
     });
     
     // 处理:::anx语法块
-    // 直接从原始markdown文件中提取anx块
-    // 支持实际换行符和转义的\n
-    // 首先尝试匹配实际换行符
-    let anxBlocks = markdown.match(/:::anx[\r\n]+([\s\S]*?)[\r\n]+:::/g);
-    
-    // 如果没有匹配到，尝试匹配转义的\n
-    if (!anxBlocks) {
-      anxBlocks = markdown.match(/:::anx\\n([\s\S]*?)\\n:::/g);
-    }
+    // 从原始markdown中提取anx块
+    let anxBlocks = markdown.match(/:::anx[\s\S]*?:::/g);
     
     if (anxBlocks) {
       anxBlocks.forEach((block, index) => {
         try {
           // 移除anx块标记
-          let jsonContent = block.replace(/:::anx[\r\n\\n]+|[\r\n\\n]+:::/g, '').trim();
+          let jsonContent = block.replace(/:::anx[\s\n\r]+|[\s\n\r]+:::/g, '').trim();
           // 处理转义的引号
           jsonContent = jsonContent.replace(/\\"/g, '"');
           const component = JSON.parse(jsonContent);
           const renderedComponent = `<anx-render>${JSON.stringify(component)}</anx-render>`;
+          
           // 渲染原始块以获取要替换的HTML
           const blockHtml = marked(block, {
             breaks: true,
             gfm: true,
             sanitize: false
           }).trim();
+          
+          // 替换HTML中的anx块
           html = html.replace(blockHtml, renderedComponent);
         } catch (error) {
           console.error('ANX plugin error:', error);

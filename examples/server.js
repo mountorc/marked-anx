@@ -152,97 +152,10 @@ app.get('/test-navigation', (req, res) => {
 // form demo路径
 app.get('/form', (req, res) => {
   try {
-    const testMarkdownPath = path.join(__dirname, 'demo-form.md');
-    const testMarkdown = fs.readFileSync(testMarkdownPath, 'utf8');
-    
-    // 渲染Markdown
-    let html = marked(testMarkdown, { 
-      breaks: true, 
-      gfm: true, 
-      sanitize: false,
-      renderer: componentRenderer,
-      extensions: componentExtensions
-    });
-    
-    // 处理:::anx语法块
-    html = html.replace(/<p>:::anx<br>([\s\S]*?)<br>:::<\/p>/g, (match, content) => {
-      try {
-        // 移除<br>标签并解析JSON
-        const jsonContent = content.replace(/<br>/g, '\n').replace(/&quot;/g, '"');
-        const component = JSON.parse(jsonContent);
-        return `<anx-render>${JSON.stringify(component)}</anx-render>`;
-      } catch (error) {
-        console.error('ANX plugin error:', error);
-        return `<anx-render>{"kind": "text", "value": "Invalid JSON: ${error.message}"}</anx-render>`;
-      }
-    });
+    const demoHtmlPath = path.join(__dirname, 'demo-form.html');
+    const demoHtml = fs.readFileSync(demoHtmlPath, 'utf8');
   
-    res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-  <title>ANX Form Demo</title>
-  <style>
-    /* 全局样式 */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f5f7fa;
-      color: #333;
-    }
-    
-    /* 内容样式 */
-    .content {
-      max-width: 1200px;
-      margin: 30px auto;
-      padding: 0 20px;
-    }
-    .content-header {
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid #e4e7ed;
-    }
-    .content-header h1 {
-      font-size: 24px;
-      font-weight: 600;
-      color: #303133;
-      margin-bottom: 10px;
-    }
-    .content-header p {
-      color: #606266;
-      font-size: 14px;
-    }
-    
-    /* ANX组件样式 */
-    .anx-container {
-      border: 1px solid #e4e7ed;
-      padding: 20px;
-      margin: 20px 0;
-      background-color: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-  </style>
-  <script type="module" src="../src/component/anx-element.js"></script>
-</head>
-<body>
-  <anx-render auto-set='{"showMode":"header"}' src="http://localhost:4665/anx/config/navigation"></anx-render>
-  <div class="content">
-    <div class="content-header">
-      <h1>ANX Form Demo</h1>
-      <p>This demo tests the form component.</p>
-    </div>
-    ${html}
-  </div>
-</body>
-</html>
-    `);
+    res.send(demoHtml);
   } catch (error) {
     console.error('Error:', error);
     res.send(`

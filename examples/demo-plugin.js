@@ -223,7 +223,7 @@ export async function handlePluginDemo(req, res) {
   <script type="module" src="../src/component/anx-element.js"></script>
 </head>
 <body>
-  <anx-render auto-set='{"showMode":"header"}' src="http://localhost:4665/anx/config/navigation"></anx-render>
+  <anx-render auto-set='{"showMode":"header"}' value="plugin" src="http://localhost:4665/anx/config/navigation"></anx-render>
   <div class="content">
     <div class="content-header">
       <h1>ANX Plugin Demo</h1>

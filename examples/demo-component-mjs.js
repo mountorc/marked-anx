@@ -199,7 +199,7 @@ export function handleComponentMjsDemo(req, res) {
   <script type="module" src="../dist/anx-element.mjs"></script>
 </head>
 <body>
-  <anx-render auto-set='{"showMode":"header"}' src="http://localhost:4665/anx/config/navigation"></anx-render>
+  <anx-render auto-set='{"showMode":"header"}' value="component_mjs" src="http://localhost:4665/anx/config/navigation"></anx-render>
   <div class="content">
     <div class="content-header">
       <h1>ANX Component MJS Demo</h1>
