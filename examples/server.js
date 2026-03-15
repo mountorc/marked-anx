@@ -7,9 +7,7 @@ import { fileURLToPath } from 'url';
 import express from 'express';
 import { marked } from 'marked';
 import { handlePluginDemo } from './demo-plugin.js';
-import { handleComponentDemo } from './demo-component.js';
 import { handleComponentMjsDemo } from './demo-component-mjs.js';
-import { handleEditorDemo } from './demo-editor.js';
 import { handleDatasetDemo } from './demo-dataset.js';
 import { generateNavigation } from './demo-navigation.js';
 import navigationConfig from './demo-navigation.js';
@@ -31,17 +29,125 @@ app.use(express.static(__dirname + '/../'));
 // plugin demo路径
 app.get('/plugin', handlePluginDemo);
 
-// component demo路径 - 使用handleComponentDemo函数
-app.get('/component', handleComponentDemo);
+// component demo路径
+app.get('/component', (req, res) => {
+  try {
+    const demoHtmlPath = path.join(__dirname, 'demo-component.html');
+    const demoHtml = fs.readFileSync(demoHtmlPath, 'utf8');
+  
+    res.send(demoHtml);
+  } catch (error) {
+    console.error('Error:', error);
+    res.send(`
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Error</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: white; color: black; }
+  </style>
+</head>
+<body>
+  <h1>Error</h1>
+  <p>${error.message}</p>
+  <pre>${error.stack}</pre>
+</body>
+</html>
+    `);
+  }
+});
 
 // component mjs demo路径 - 使用handleComponentMjsDemo函数
 app.get('/component-mjs', handleComponentMjsDemo);
 
 // editor demo路径
-app.get('/editor', handleEditorDemo);
+app.get('/editor', (req, res) => {
+  try {
+    const demoHtmlPath = path.join(__dirname, 'demo-editor.html');
+    const demoHtml = fs.readFileSync(demoHtmlPath, 'utf8');
+  
+    res.send(demoHtml);
+  } catch (error) {
+    console.error('Error:', error);
+    res.send(`
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Error</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: white; color: black; }
+  </style>
+</head>
+<body>
+  <h1>Error</h1>
+  <p>${error.message}</p>
+  <pre>${error.stack}</pre>
+</body>
+</html>
+    `);
+  }
+});
 
 // dataset demo路径
 app.get('/dataset', handleDatasetDemo);
+
+// demo-marked-anx路径
+app.get('/demo-marked-anx', (req, res) => {
+  try {
+    const demoHtmlPath = path.join(__dirname, 'demo-marked-anx.html');
+    const demoHtml = fs.readFileSync(demoHtmlPath, 'utf8');
+  
+    res.send(demoHtml);
+  } catch (error) {
+    console.error('Error:', error);
+    res.send(`
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Error</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: white; color: black; }
+  </style>
+</head>
+<body>
+  <h1>Error</h1>
+  <p>${error.message}</p>
+  <pre>${error.stack}</pre>
+</body>
+</html>
+    `);
+  }
+});
+
+
+
+// test-navigation路径
+app.get('/test-navigation', (req, res) => {
+  try {
+    const demoHtmlPath = path.join(__dirname, 'test-navigation.html');
+    const demoHtml = fs.readFileSync(demoHtmlPath, 'utf8');
+  
+    res.send(demoHtml);
+  } catch (error) {
+    console.error('Error:', error);
+    res.send(`
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Error</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: white; color: black; }
+  </style>
+</head>
+<body>
+  <h1>Error</h1>
+  <p>${error.message}</p>
+  <pre>${error.stack}</pre>
+</body>
+</html>
+    `);
+  }
+});
 
 // form demo路径
 app.get('/form', (req, res) => {
@@ -71,9 +177,6 @@ app.get('/form', (req, res) => {
       }
     });
   
-    // 生成导航栏HTML
-    const navHTML = generateNavigation('/form');
-    
     res.send(`
 <!DOCTYPE html>
 <html>
@@ -92,52 +195,6 @@ app.get('/form', (req, res) => {
       padding: 0;
       background-color: #f5f7fa;
       color: #333;
-    }
-    
-    /* 导航栏样式 */
-    .anx-nav {
-      background-color: #ffffff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      padding: 0 20px;
-    }
-    .anx-nav-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 60px;
-    }
-    .anx-nav-logo {
-      font-size: 18px;
-      font-weight: bold;
-      color: #409eff;
-      text-decoration: none;
-    }
-    .anx-nav-menu {
-      display: flex;
-      list-style: none;
-    }
-    .anx-nav-item {
-      margin-left: 20px;
-      position: relative;
-    }
-    .anx-nav-link {
-      display: block;
-      padding: 8px 12px;
-      color: #606266;
-      text-decoration: none;
-      border-radius: 4px;
-      transition: all 0.3s ease;
-    }
-    .anx-nav-link:hover {
-      color: #409eff;
-      background-color: #ecf5ff;
-    }
-    .anx-nav-link.active {
-      color: #409eff;
-      font-weight: 500;
-      background-color: #ecf5ff;
     }
     
     /* 内容样式 */
@@ -175,7 +232,7 @@ app.get('/form', (req, res) => {
   <script type="module" src="../src/component/anx-element.js"></script>
 </head>
 <body>
-${navHTML}
+  <anx-render auto-set='{"showMode":"header"}' src="http://localhost:4665/anx/config/navigation"></anx-render>
   <div class="content">
     <div class="content-header">
       <h1>ANX Form Demo</h1>
@@ -235,11 +292,22 @@ app.get('/element', (req, res) => {
   }
 });
 
+// 导航配置 API 接口
+app.get('/anx/config/navigation', (req, res) => {
+  try {
+    const navigationPath = path.join(__dirname, 'demo-navigation.json');
+    const navigationContent = fs.readFileSync(navigationPath, 'utf8');
+    const navigationConfig = JSON.parse(navigationContent);
+    
+    res.json({ config: navigationConfig });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // 首页
 app.get('/', (req, res) => {
-  // 生成导航栏HTML
-  const navHTML = generateNavigation('/');
-  
   res.send(`
 <!DOCTYPE html>
 <html>
@@ -258,52 +326,6 @@ app.get('/', (req, res) => {
       padding: 0;
       background-color: #f5f7fa;
       color: #333;
-    }
-    
-    /* 导航栏样式 */
-    .anx-nav {
-      background-color: #ffffff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      padding: 0 20px;
-    }
-    .anx-nav-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 60px;
-    }
-    .anx-nav-logo {
-      font-size: 18px;
-      font-weight: bold;
-      color: #409eff;
-      text-decoration: none;
-    }
-    .anx-nav-menu {
-      display: flex;
-      list-style: none;
-    }
-    .anx-nav-item {
-      margin-left: 20px;
-      position: relative;
-    }
-    .anx-nav-link {
-      display: block;
-      padding: 8px 12px;
-      color: #606266;
-      text-decoration: none;
-      border-radius: 4px;
-      transition: all 0.3s ease;
-    }
-    .anx-nav-link:hover {
-      color: #409eff;
-      background-color: #ecf5ff;
-    }
-    .anx-nav-link.active {
-      color: #409eff;
-      font-weight: 500;
-      background-color: #ecf5ff;
     }
     
     /* 内容样式 */
@@ -356,9 +378,10 @@ app.get('/', (req, res) => {
       color: #409eff;
     }
   </style>
+  <script type="module" src="../src/component/anx-element.js"></script>
 </head>
 <body>
-${navHTML}
+  <anx-render auto-set='{"showMode":"header"}' src="http://localhost:4665/anx/config/navigation"></anx-render>
   <div class="content">
     <div class="content-header">
       <h1>marked-ANX-demo</h1>
@@ -367,7 +390,7 @@ ${navHTML}
     <div class="demo-list">
       <h2>Demos:</h2>
       <ul>
-        ${navigationConfig.map(item => {
+        ${(navigationConfig.items || navigationConfig).map(item => {
           let description = '';
           switch(item.url_page) {
             case '/':
@@ -394,6 +417,13 @@ ${navHTML}
             case '/dataset':
               description = 'Returns mock dataset in {"data":[]} format';
               break;
+            case '/demo-marked-anx':
+              description = 'Marked ANX component demo';
+              break;
+
+            case '/test-navigation':
+              description = 'Navigation test with remote src';
+              break;
             default:
               description = '';
           }
@@ -417,4 +447,5 @@ app.listen(port, () => {
   console.log(`Form Demo: http://localhost:${port}/form`);
   console.log(`Editor Demo: http://localhost:${port}/editor`);
   console.log(`Dataset Demo: http://localhost:${port}/dataset`);
+  console.log(`Marked ANX Demo: http://localhost:${port}/demo-marked-anx`);
 });

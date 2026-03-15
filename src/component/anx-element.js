@@ -1,25 +1,74 @@
 // 定义自定义元素 anx-component
 import { renderComponent } from '../common/common.js';
+import { fetchDataset } from '../common/dataset.js';
+import { renderNavigation } from '../common/kinds/navigation.js';
 
 // 只在浏览器环境中定义自定义元素
 if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLElement !== 'undefined') {
   class AnxComponentElement extends HTMLElement {
     constructor() {
-      super();
-      this.attachShadow({ mode: 'open' });
-    }
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
 
-    connectedCallback() {
+  static get observedAttributes() {
+    return ['src', 'markdown', 'auto-set', 'value'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === 'src' || name === 'markdown' || name === 'auto-set' || name === 'value') {
+      this.connectedCallback();
+    }
+  }
+
+  async connectedCallback() {
       try {
         // 解析标签内的 JSON 内容
         console.log("Element connected:", this);
         console.log("Element tag name:", this.tagName);
         
-        // 直接处理内容，不需要 setTimeout
-        const content = this.textContent.trim();
-        console.log("Content length:", content.length);
-        console.log("Content starts with:", content.substring(0, 50) + '...');
-        console.log("Content:", content);
+        let content;
+        
+        // 检查是否有 src 属性
+        if (this.hasAttribute('src')) {
+          const src = this.getAttribute('src');
+          console.log("Fetching content from src:", src);
+          
+          try {
+            const response = await fetch(src);
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            content = await response.text();
+            console.log("Fetched content:", content);
+          } catch (fetchError) {
+            console.error("Error fetching content:", fetchError);
+            this.shadowRoot.innerHTML = `
+              <style>
+                .anx-error {
+                  color: #f56c6c;
+                  background-color: #fef0f0;
+                  border: 1px solid #fbc4c4;
+                  padding: 12px;
+                  border-radius: 4px;
+                  font-size: 14px;
+                }
+              </style>
+              <div class="anx-error">Error fetching content: ${fetchError.message}</div>
+            `;
+            return;
+          }
+        } else if (this.hasAttribute('markdown')) {
+          // 从 markdown 属性获取
+          content = this.getAttribute('markdown');
+          console.log("Content from markdown attribute:", content);
+        } else {
+          // 从标签内部获取
+          content = this.textContent.trim();
+          console.log("Content length:", content.length);
+          console.log("Content starts with:", content.substring(0, 50) + '...');
+          console.log("Content:", content);
+        }
         
         if (!content) {
           console.log("No content found");
@@ -70,7 +119,57 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof H
           }
         }
         
+        // 检查是否有auto-set属性
+        let autoSet = null;
+        if (this.hasAttribute('auto-set')) {
+          try {
+            autoSet = JSON.parse(this.getAttribute('auto-set'));
+            console.log("Auto-set config:", autoSet);
+          } catch (autoSetError) {
+            console.error("Error parsing auto-set attribute:", autoSetError);
+          }
+        }
+        
+        // 检查是否有value属性
+        if (this.hasAttribute('value')) {
+          const value = this.getAttribute('value');
+          console.log("Value attribute:", value);
+          // 将value属性传递给组件
+          component.value = value;
+        }
+        
+        // 检查是否是 {config:{kind:"navigation",items:[]}} 格式
+        if (component.config && component.config.kind) {
+          component = component.config;
+          // 将auto-set配置合并到第一层kind组件中
+          if (autoSet) {
+            Object.assign(component, autoSet);
+          }
+          // 传递value属性
+          if (this.hasAttribute('value')) {
+            component.value = this.getAttribute('value');
+          }
+        } else {
+          // 如果不是config格式，直接合并auto-set配置
+          if (autoSet) {
+            Object.assign(component, autoSet);
+          }
+          // 传递value属性
+          if (this.hasAttribute('value')) {
+            component.value = this.getAttribute('value');
+          }
+        }
+        
         console.log("Parsed component:", component);
+        
+        // 检查是否有数据集配置
+        if (component.dataset) {
+          console.log("Fetching dataset...");
+          const datasetData = await fetchDataset(component.dataset);
+          console.log("Dataset data:", datasetData);
+          // 将数据集数据添加到组件配置中
+          component.data = datasetData;
+        }
         
         // 渲染组件
         const renderedContent = renderComponent(component);
@@ -81,14 +180,13 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof H
               box-sizing: border-box;
             }
             
-            /* 容器样式 */
+            /* 容器样式 - 移除外边框 */
             .anx-container {
-              border: 1px solid #ddd;
-              padding: 15px;
-              margin: 10px 0;
-              background-color: #f9f9f9;
-              border-radius: 4px;
-              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              padding: 0;
+              margin: 0;
+              background-color: transparent;
+              border-radius: 0;
+              box-shadow: none;
             }
             
             /* 盒子样式 */

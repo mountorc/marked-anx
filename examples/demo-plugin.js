@@ -3,7 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { marked } from 'marked';
 import markedAnx from '../src/index.js';
-import { renderComponent } from '../src/common/common.js';
+import { renderComponentAsync } from '../src/common/renderers.js';
 import { generateNavigation } from './demo-navigation.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -14,7 +14,7 @@ const anxPlugin = markedAnx();
 const { renderer, extensions } = anxPlugin(marked);
 
 // plugin demo处理函数
-export function handlePluginDemo(req, res) {
+export async function handlePluginDemo(req, res) {
   try {
     const testMarkdownPath = path.join(__dirname, 'demo.md');
     const testMarkdown = fs.readFileSync(testMarkdownPath, 'utf8');
@@ -27,23 +27,59 @@ export function handlePluginDemo(req, res) {
       extensions: extensions
     });
     
-    // 处理:::anx语法块
-    html = html.replace(/<p>:::anx<br>([\s\S]*?)<br>:::<\/p>/g, (match, content) => {
-      try {
-        // 移除<br>标签并解析JSON
-        const jsonContent = content.replace(/<br>/g, '\n').replace(/&quot;/g, '"');
-        const component = JSON.parse(jsonContent);
-        return `<div class="anx-container">${renderComponent(component)}</div>`;
-      } catch (error) {
-        console.error('ANX plugin error:', error);
-        return `<div class="anx-container"><div class="anx-error">Invalid JSON: ${error.message}</div></div>`;
-      }
+    // 直接从原始markdown文件中提取anx块
+    const anxBlocks = testMarkdown.match(/:::anx\n([\s\S]*?)\n:::/g);
+    console.log('Found', anxBlocks ? anxBlocks.length : 0, 'anx blocks in markdown');
+    
+    // 先渲染markdown，不处理anx块
+    let markdownHtml = marked(testMarkdown, {
+      breaks: true,
+      gfm: true,
+      sanitize: false,
+      renderer: renderer,
+      extensions: extensions
     });
+    
+    // 然后处理anx块
+    if (anxBlocks) {
+      for (let i = 0; i < anxBlocks.length; i++) {
+        const block = anxBlocks[i];
+        console.log(`Processing ANX block ${i + 1}:`, block);
+        try {
+          const jsonContent = block.replace(/:::anx\n|\n:::/g, '').trim();
+          console.log(`JSON content for block ${i + 1}:`, jsonContent);
+          const component = JSON.parse(jsonContent);
+          console.log(`Parsed component ${i + 1}:`, component);
+          
+          // 异步渲染组件，处理dataset
+          const renderedComponent = await renderComponentAsync(component);
+          const componentHtml = `<div class="anx-container">${renderedComponent}</div>`;
+          
+          // 替换markdown渲染后的内容中的anx块
+          const blockHtml = marked(block, {
+            breaks: true,
+            gfm: true,
+            sanitize: false
+          }).trim();
+          console.log(`Block HTML for block ${i + 1}:`, blockHtml);
+          markdownHtml = markdownHtml.replace(blockHtml, componentHtml);
+        } catch (error) {
+          console.error(`ANX plugin error for block ${i + 1}:`, error);
+          const errorHtml = `<div class="anx-container"><div class="anx-error">Invalid JSON in block ${i + 1}: ${error.message}</div></div>`;
+          const blockHtml = marked(block, {
+            breaks: true,
+            gfm: true,
+            sanitize: false
+          }).trim();
+          markdownHtml = markdownHtml.replace(blockHtml, errorHtml);
+        }
+      }
+    }
+    
+    html = markdownHtml;
+    
     console.log('Rendered HTML (plugin):', html);
   
-    // 生成导航栏HTML
-    const navHTML = generateNavigation('/plugin');
-    
     res.send(`
 <!DOCTYPE html>
 <html>
@@ -62,52 +98,6 @@ export function handlePluginDemo(req, res) {
       padding: 0;
       background-color: #f5f7fa;
       color: #333;
-    }
-    
-    /* 导航栏样式 */
-    .anx-nav {
-      background-color: #ffffff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      padding: 0 20px;
-    }
-    .anx-nav-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 60px;
-    }
-    .anx-nav-logo {
-      font-size: 18px;
-      font-weight: bold;
-      color: #409eff;
-      text-decoration: none;
-    }
-    .anx-nav-menu {
-      display: flex;
-      list-style: none;
-    }
-    .anx-nav-item {
-      margin-left: 20px;
-      position: relative;
-    }
-    .anx-nav-link {
-      display: block;
-      padding: 8px 12px;
-      color: #606266;
-      text-decoration: none;
-      border-radius: 4px;
-      transition: all 0.3s ease;
-    }
-    .anx-nav-link:hover {
-      color: #409eff;
-      background-color: #ecf5ff;
-    }
-    .anx-nav-link.active {
-      color: #409eff;
-      font-weight: 500;
-      background-color: #ecf5ff;
     }
     
     /* 内容样式 */
@@ -230,9 +220,10 @@ export function handlePluginDemo(req, res) {
       font-size: 16px;
     }
   </style>
+  <script type="module" src="../src/component/anx-element.js"></script>
 </head>
 <body>
-${navHTML}
+  <anx-render auto-set='{"showMode":"header"}' src="http://localhost:4665/anx/config/navigation"></anx-render>
   <div class="content">
     <div class="content-header">
       <h1>ANX Plugin Demo</h1>

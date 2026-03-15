@@ -7,11 +7,11 @@ const __dirname = path.dirname(__filename);
 
 // 模拟数据集
 const mockDataset = [
-  { "sku": "商品A","price":98 },
-  { "sku": "商品B","price":58 },
-  { "sku": "商品C","price":38 },
-  { "sku": "商品D","price":65 },
-  { "sku": "商品E","price":107 }
+  { "name": "商品A","price":98 },
+  { "name": "商品B","price":58 },
+  { "name": "商品C","price":38 },
+  { "name": "商品D","price":65 },
+  { "name": "商品E","price":107 }
 ];
 
 // 处理函数

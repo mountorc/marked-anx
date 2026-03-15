@@ -1,57 +1,7 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { marked } from 'marked';
-import markedAnxComponent from '../src/component/index.js';
-import { generateNavigation } from './demo-navigation.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// 初始化component demo - 使用component版本的渲染
-const anxComponentPlugin = markedAnxComponent();
-const { renderer: componentRenderer, extensions: componentExtensions } = anxComponentPlugin(marked);
-
-// component demo处理函数
-export function handleComponentDemo(req, res) {
-  try {
-    const testMarkdownPath = path.join(__dirname, 'demo.md');
-    let testMarkdown = fs.readFileSync(testMarkdownPath, 'utf8');
-    console.log('Markdown content (component):', testMarkdown);
-    
-    // 渲染Markdown
-    let html = marked(testMarkdown, { 
-      breaks: true, 
-      gfm: true, 
-      sanitize: false,
-      renderer: componentRenderer,
-      extensions: componentExtensions
-    });
-    
-    // 处理:::anx语法块
-    html = html.replace(/<p>:::anx<br>([\s\S]*?)<br>:::<\/p>/g, (match, content) => {
-      try {
-        // 移除<br>标签并解析JSON
-        const jsonContent = content.replace(/<br>/g, '\n').replace(/&quot;/g, '"');
-        const component = JSON.parse(jsonContent);
-        return `<anx-render>${JSON.stringify(component)}</anx-render>`;
-      } catch (error) {
-        console.error('ANX plugin error:', error);
-        return `<anx-render>{"kind": "text", "value": "Invalid JSON: ${error.message}"}</anx-render>`;
-      }
-    });
-    
-    console.log('Rendered HTML (component):', html);
-  
-    // 生成导航栏HTML
-    const navHTML = generateNavigation('/component');
-    
-    res.send(`
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ANX Component Demo</title>
-  <script type="module" src="../src/component/anx-element.js"></script>
+  <title>Marked ANX Demo</title>
   <style>
     /* 全局样式 */
     * {
@@ -233,36 +183,98 @@ export function handleComponentDemo(req, res) {
       font-size: 16px;
     }
   </style>
+  <script type="module">
+    import { marked } from 'https://cdn.jsdelivr.net/npm/marked@14.1.1/+esm';
+    import markedAnxComponent from '/dist/marked-anx-component.mjs';
+    
+    // 初始化ANX组件插件
+    const anxComponentPlugin = markedAnxComponent();
+    const { renderer, extensions } = anxComponentPlugin(marked);
+    
+    // 获取Markdown内容
+    async function getMarkdownContent() {
+      try {
+        const response = await fetch('/examples/demo.md');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.text();
+      } catch (error) {
+        console.error('Error fetching markdown:', error);
+        return '# Error\n\nFailed to load markdown content.';
+      }
+    }
+    
+    // 处理ANX块
+    function processAnxBlocks(markdown, marked, renderer, extensions) {
+      // 渲染Markdown
+      let html = marked(markdown, {
+        breaks: true,
+        gfm: true,
+        sanitize: false,
+        renderer: renderer,
+        extensions: extensions
+      });
+      
+      // 处理:::anx语法块
+      // 直接从原始markdown文件中提取anx块
+      const anxBlocks = markdown.match(/:::anx[\r\n]+([\s\S]*?)[\r\n]+:::/g);
+      if (anxBlocks) {
+        anxBlocks.forEach((block, index) => {
+          try {
+            const jsonContent = block.replace(/:::anx[\r\n]+|[\r\n]+:::/g, '').trim();
+            const component = JSON.parse(jsonContent);
+            const renderedComponent = `<anx-render>${JSON.stringify(component)}</anx-render>`;
+            const blockHtml = marked(block, {
+              breaks: true,
+              gfm: true,
+              sanitize: false
+            }).trim();
+            html = html.replace(blockHtml, renderedComponent);
+          } catch (error) {
+            console.error('ANX plugin error:', error);
+            const errorComponent = `<anx-render>{"kind": "text", "value": "Invalid JSON: ${error.message}"}</anx-render>`;
+            const blockHtml = marked(block, {
+              breaks: true,
+              gfm: true,
+              sanitize: false
+            }).trim();
+            html = html.replace(blockHtml, errorComponent);
+          }
+        });
+      }
+      
+      return html;
+    }
+    
+    // 渲染页面
+    async function renderPage() {
+      try {
+        const markdown = await getMarkdownContent();
+        const html = processAnxBlocks(markdown, marked, renderer, extensions);
+        document.getElementById('content').innerHTML = html;
+      } catch (error) {
+        console.error('Error rendering page:', error);
+        document.getElementById('content').innerHTML = `<div class="anx-error">Error: ${error.message}</div>`;
+      }
+    }
+    
+    // 页面加载完成后渲染
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 渲染内容
+      await renderPage();
+    });
+  </script>
+  <script type="module" src="/src/component/anx-element.js"></script>
 </head>
 <body>
-${navHTML}
+  <anx-render auto-set='{"showMode":"header"}' value="marked_anx_demo" src="http://localhost:4665/anx/config/navigation"></anx-render>
   <div class="content">
     <div class="content-header">
-      <h1>ANX Component Demo</h1>
-      <p>This demo uses the anx-component.js marked plugin with &lt;anx-render&gt; elements for visualization.</p>
+      <h1>Marked ANX Demo</h1>
+      <p>This demo uses the marked-anx-component.mjs ES module directly in HTML.</p>
     </div>
-    ${html}
+    <div id="content"></div>
   </div>
 </body>
 </html>
-    `);
-  } catch (error) {
-    console.error('Error:', error);
-    res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Error</title>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: white; color: black; }
-  </style>
-</head>
-<body>
-  <h1>Error</h1>
-  <p>${error.message}</p>
-  <pre>${error.stack}</pre>
-</body>
-</html>
-    `);
-  }
-}

@@ -1,50 +1,83 @@
-[
-  {
-    "title": "Home",
-    "nick": "home",
-    "uuid_page": "home_123",
-    "url_page": "/"
-  },
-  {
-    "title": "Plugin Demo",
-    "nick": "plugin",
-    "uuid_page": "plugin_456",
-    "url_page": "/plugin"
-  },
-  {
-    "title": "Element Demo",
-    "nick": "element",
-    "uuid_page": "element_789",
-    "url_page": "/element"
-  },
-  {
-    "title": "Component Demo",
-    "nick": "component",
-    "uuid_page": "component_101",
-    "url_page": "/component"
-  },
-  {
-    "title": "Component MJS Demo",
-    "nick": "component_mjs",
-    "uuid_page": "component_mjs_102",
-    "url_page": "/component-mjs"
-  },
-  {
-    "title": "Form Demo",
-    "nick": "form",
-    "uuid_page": "form_103",
-    "url_page": "/form"
-  },
-  {
-    "title": "Editor Demo",
-    "nick": "editor",
-    "uuid_page": "editor_104",
-    "url_page": "/editor"
-  },
-  {
-    "title": "Dataset Demo",
-    "nick": "dataset",
-    "uuid_page": "dataset_105",
-    "url_page": "/dataset"
-  }
-]
+{
+  "kind": "navigation",
+  "title": "marked-ANX",
+  "items": [
+    {
+      "title": "Home",
+      "nick": "home",
+      "uuid_page": "home_123",
+      "url_page": "/",
+      "description": "Home page with demo list"
+    },
+    {
+      "title": "Plugin Demo",
+      "nick": "plugin",
+      "uuid_page": "plugin_456",
+      "url_page": "/plugin",
+      "description": "Uses marked-anx plugin directly"
+    },
+    {
+      "title": "Element Demo",
+      "nick": "element",
+      "uuid_page": "element_789",
+      "url_page": "/element",
+      "description": "Uses &lt;anx-render&gt; element directly"
+    },
+    {
+      "title": "Component Demo",
+      "nick": "component",
+      "uuid_page": "component_101",
+      "url_page": "/component",
+      "description": "Uses marked-anx component plugin with &lt;anx-render&gt; elements"
+    },
+    {
+      "title": "Component MJS Demo",
+      "nick": "component_mjs",
+      "uuid_page": "component_mjs_102",
+      "url_page": "/component-mjs",
+      "description": "Uses marked-anx-component.mjs ES module"
+    },
+    {
+      "title": "Form Demo",
+      "nick": "form",
+      "uuid_page": "form_103",
+      "url_page": "/form",
+      "description": "Tests the form component"
+    },
+    {
+      "title": "Editor Demo",
+      "nick": "editor",
+      "uuid_page": "editor_104",
+      "url_page": "/editor",
+      "description": "Markdown editor with live preview"
+    },
+    {
+      "title": "Dataset Demo",
+      "nick": "dataset",
+      "uuid_page": "dataset_105",
+      "url_page": "/dataset",
+      "description": "Returns mock dataset in {\"data\":[]} format"
+    },
+    {
+      "title": "Marked ANX Demo",
+      "nick": "marked_anx_demo",
+      "uuid_page": "marked_anx_demo_107",
+      "url_page": "/demo-marked-anx",
+      "description": "Marked ANX component demo"
+    },
+    {
+      "title": "Component Usage Demo",
+      "nick": "component_usage_demo",
+      "uuid_page": "component_usage_demo_108",
+      "url_page": "/demo-component-usage",
+      "description": "Component usage demo"
+    },
+    {
+      "title": "Navigation Test",
+      "nick": "navigation_test",
+      "uuid_page": "navigation_test_106",
+      "url_page": "/test-navigation",
+      "description": "Navigation test with remote src"
+    }
+  ]
+}

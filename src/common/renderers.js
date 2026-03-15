@@ -1,4 +1,6 @@
 // 组件渲染器
+import { fetchDataset } from './dataset.js';
+import { renderNavigation } from './kinds/navigation.js';
 
 /**
  * 渲染组件
@@ -23,9 +25,34 @@ export function renderComponent(component) {
       return renderButton(component);
     case 'form':
       return renderForm(component);
+    case 'navigation':
+      return renderNavigation(component);
     default:
       return `<div class="anx-component anx-${component.kind}">${JSON.stringify(component)}</div>`;
   }
+}
+
+/**
+ * 异步渲染组件，支持dataset配置
+ * @param {Object} component - 组件配置
+ * @returns {Promise<string>} - 渲染后的HTML
+ */
+export async function renderComponentAsync(component) {
+  if (!component || !component.kind) {
+    return '<div class="anx-error">Invalid component</div>';
+  }
+  
+  // 检查是否有数据集配置
+  if (component.dataset) {
+    try {
+      const datasetData = await fetchDataset(component.dataset);
+      component.data = datasetData;
+    } catch (error) {
+      console.error('Error fetching dataset:', error);
+    }
+  }
+  
+  return renderComponent(component);
 }
 
 /**

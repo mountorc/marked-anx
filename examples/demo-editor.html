@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Marked Markdown Editor</title>
+  <style>
+    /* 全局样式 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    /* 容器样式 */
+    .container {
+      display: flex;
+      height: calc(100vh - 70px);
+      max-width: 1400px;
+      margin: 0 auto;
+      gap: 20px;
+      padding: 20px;
+    }
+    .editor, .preview {
+      flex: 1;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* 编辑器样式 */
+    .editor-header, .preview-header {
+      padding: 20px 24px;
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .editor-header h1, .preview-header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #495057;
+      margin: 0;
+    }
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      padding: 6px 12px;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      background-color: white;
+      color: #495057;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn:hover {
+      background-color: #f8f9fa;
+      border-color: #adb5bd;
+    }
+    .btn-primary {
+      background-color: #409eff;
+      color: white;
+      border-color: #409eff;
+    }
+    .btn-primary:hover {
+      background-color: #66b1ff;
+      border-color: #66b1ff;
+    }
+    textarea {
+      flex: 1;
+      width: 100%;
+      border: none;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 15px;
+      line-height: 1.6;
+      resize: none;
+      background-color: transparent;
+      color: #343a40;
+      padding: 24px;
+    }
+    
+    /* 预览样式 */
+    #preview {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    #preview h1, #preview h2, #preview h3 {
+      color: #212529;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+    #preview h1 {
+      font-size: 28px;
+      border-bottom: 2px solid #e9ecef;
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+    }
+    #preview h2 {
+      font-size: 22px;
+      border-bottom: 1px solid #e9ecef;
+      padding-bottom: 8px;
+      margin-top: 32px;
+    }
+    #preview h3 {
+      font-size: 18px;
+      margin-top: 24px;
+    }
+    #preview p {
+      margin-bottom: 16px;
+      line-height: 1.6;
+      color: #495057;
+    }
+    #preview code {
+      background-color: #f8f9fa;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 14px;
+      color: #e83e8c;
+    }
+    #preview pre {
+      background-color: #f8f9fa;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin-bottom: 16px;
+      border: 1px solid #e9ecef;
+    }
+    #preview pre code {
+      background-color: transparent;
+      padding: 0;
+      color: #495057;
+    }
+    #preview ul, #preview ol {
+      margin-bottom: 16px;
+      padding-left: 28px;
+    }
+    #preview li {
+      margin-bottom: 8px;
+      color: #495057;
+    }
+    #preview blockquote {
+      border-left: 4px solid #409eff;
+      padding-left: 16px;
+      margin: 16px 0;
+      color: #6c757d;
+      font-style: italic;
+    }
+    #preview hr {
+      border: none;
+      border-top: 1px solid #e9ecef;
+      margin: 24px 0;
+    }
+    
+    /* ANX组件样式 */
+    .anx-container {
+      border: 1px solid #e9ecef;
+      padding: 24px;
+      margin: 24px 0;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: box-shadow 0.3s ease;
+    }
+    .anx-container:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+    .anx-box {
+      border: 1px solid #e9ecef;
+      border-radius: 12px;
+      margin: 20px 0;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: box-shadow 0.3s ease;
+    }
+    .anx-box:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+    .anx-box-title {
+      background-color: #f8f9fa;
+      padding: 16px 20px;
+      font-weight: 600;
+      border-bottom: 1px solid #e9ecef;
+      color: #495057;
+      font-size: 16px;
+    }
+    .anx-box-content {
+      padding: 20px;
+    }
+    .anx-box-item {
+      border: 1px solid #e9ecef;
+      padding: 16px;
+      margin: 12px 0;
+      border-radius: 8px;
+      background-color: #ffffff;
+      transition: all 0.2s ease;
+    }
+    .anx-box-item:hover {
+      border-color: #409eff;
+      box-shadow: 0 2px 8px rgba(64, 158, 255, 0.1);
+    }
+    .anx-board {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 16px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+    }
+    .anx-text {
+      padding: 16px;
+      color: #495057;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+    }
+    .anx-input-wrapper {
+      margin: 16px 0;
+    }
+    .anx-input {
+      padding: 12px 16px;
+      border: 1px solid #ced4da;
+      border-radius: 8px;
+      width: 100%;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+      font-size: 15px;
+    }
+    .anx-input:focus {
+      outline: none;
+      border-color: #409eff;
+      box-shadow: 0 0 0 3px rgba(64, 158, 255, 0.1);
+    }
+    .anx-button {
+      padding: 12px 24px;
+      background-color: #409eff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .anx-button:hover {
+      background-color: #66b1ff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(64, 158, 255, 0.2);
+    }
+    .anx-error {
+      color: #f56c6c;
+      background-color: #fef0f0;
+      border: 1px solid #fbc4c4;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .anx-error::before {
+      content: "⚠️";
+      font-size: 18px;
+    }
+    .product {
+      border: 1px solid #e9ecef;
+      padding: 20px;
+      margin: 16px 0;
+      border-radius: 12px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+    .product:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+    .product h2 {
+      margin-top: 0;
+      font-size: 18px;
+      color: #212529;
+      border: none;
+      padding: 0;
+      margin-bottom: 8px;
+    }
+    .price {
+      color: #f56c6c;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    
+    /* 滚动条样式 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #a1a1a1;
+    }
+  </style>
+  <script type="module" src="/src/component/anx-element.js"></script>
+  <script type="module" src="/examples/marked-anx-component.js"></script>
+</head>
+<body>
+  <anx-render auto-set='{"showMode":"header"}' value="editor" src="http://localhost:4665/anx/config/navigation"></anx-render>
+  <div class="container">
+    <div class="editor">
+      <div class="editor-header">
+        <h1>Markdown Editor</h1>
+        <div class="header-actions">
+          <button class="btn" onclick="loadDemoContent()">Load Demo</button>
+          <button class="btn" onclick="clearEditor()">Clear</button>
+          <button class="btn btn-primary" onclick="copyContent()">Copy</button>
+        </div>
+      </div>
+      <textarea id="editor"># Test ANX Plugin
+
+## Box Component
+
+:::anx
+{
+  "kind": "box",
+  "title": "Welcome",
+  "html": "<p>Hello, {{user.name}}!</p>"
+}
+:::
+
+## Box with Data
+
+:::anx
+{
+  "kind": "box",
+  "title": "Product List dataset",
+  "dataset": {
+    "url_dataset": "http://localhost:4665/dataset"
+  },
+  "html": "<div class='product'><h2>{{name}}</h2><p class='price'>{{price}}</p></div>"
+}
+:::
+
+:::anx
+{
+  "kind": "box",
+  "title": "Product List",
+  "data": [
+    { "name": "Product 1", "price": 100 },
+    { "name": "Product 2", "price": 28000 }
+  ],
+  "html": "<div class='product'><h2>{{name}}</h2><p class='price'>{{price}}</p></div>"
+}
+:::
+
+## Board Component
+
+:::anx
+{
+  "kind": "board",
+  "kinds": [
+    { "kind": "text", "value": "User Information" },
+    { "kind": "input", "placeholder": "Please enter your name", "nick": "username" },
+    { "kind": "input", "placeholder": "Please enter your email", "nick": "email" },
+    { "kind": "button", "label": "Submit", "action": "submitForm" }
+  ]
+}
+:::
+
+## Text Component
+
+:::anx
+{
+  "kind": "text",
+  "value": "This is a text component"
+}
+:::
+
+## Input Component
+
+:::anx
+{
+  "kind": "input",
+  "placeholder": "Enter something",
+  "value": "Initial value",
+  "nick": "inputField"
+}
+:::
+
+## Button Component
+
+:::anx
+{
+  "kind": "button",
+  "label": "Click Me",
+  "action": "doSomething"
+}
+:::
+
+## Form Component
+
+:::anx
+{
+  "kind": "form",
+  "title": "User Registration",
+  "kinds": [
+    {
+      "kind": "input",
+      "type": "string",
+      "nick": "username",
+      "title": "Username",
+      "defaultValue": "",
+      "must": true,
+      "placeholder": "请输入用户名",
+      "minLength": 3,
+      "maxLength": 20,
+      "description": "用户的登录名称"
+    },
+    {
+      "kind": "input",
+      "type": "number",
+      "nick": "age",
+      "title": "Age",
+      "defaultValue": 18,
+      "must": true,
+      "placeholder": "请输入年龄",
+      "description": "用户的年龄"
+    },
+    {
+      "kind": "input",
+      "type": "string",
+      "nick": "email",
+      "title": "Email",
+      "defaultValue": "",
+      "must": true,
+      "placeholder": "请输入邮箱",
+      "description": "用户的邮箱地址"
+    },
+    {
+      "kind": "button",
+      "label": "Submit",
+      "action": "submitForm"
+    }
+  ],
+  "action": "/submit-form",
+  "submitText": "Register"
+}
+:::
+
+## Invalid JSON
+
+:::anx
+{
+  "kind": "box",
+  "title": "Invalid JSON",
+  "html": "This will cause an error"
+}
+:::
+
+Regular text here</textarea>
+    </div>
+    <div class="preview">
+      <div class="preview-header">
+        <h1>Preview</h1>
+        <div class="header-actions">
+          <button class="btn" onclick="refreshPreview()">Refresh</button>
+        </div>
+      </div>
+      <div id="preview"></div>
+    </div>
+  </div>
+  <script type="module">
+    function render() {
+      const editor = document.getElementById('editor');
+      const preview = document.getElementById('preview');
+      const markdown = editor.value;
+      
+      try {
+        // 使用marked-anx组件渲染内容
+        preview.innerHTML = '<marked-anx>' + markdown + '</marked-anx>';
+      } catch (error) {
+        console.error('Render error:', error);
+        preview.innerHTML = '<div class="anx-error">Render error: ' + error.message + '</div>';
+      }
+    }
+    
+    // 加载演示内容
+    async function loadDemoContent() {
+      try {
+        const response = await fetch('/demo.md');
+        if (response.ok) {
+          const content = await response.text();
+          document.getElementById('editor').value = content;
+          render();
+          showNotification('Demo content loaded successfully!');
+        } else {
+          throw new Error('Failed to load demo content');
+        }
+      } catch (error) {
+        console.error('Error loading demo content:', error);
+        showNotification('Error loading demo content', 'error');
+      }
+    }
+    
+    // 清除编辑器
+    function clearEditor() {
+      document.getElementById('editor').value = '';
+      render();
+      showNotification('Editor cleared');
+    }
+    
+    // 复制内容
+    function copyContent() {
+      const editor = document.getElementById('editor');
+      editor.select();
+      document.execCommand('copy');
+      showNotification('Content copied to clipboard!');
+    }
+    
+    // 刷新预览
+    function refreshPreview() {
+      render();
+      showNotification('Preview refreshed');
+    }
+    
+    // 显示通知
+    function showNotification(message, type = 'success') {
+      const notification = document.createElement('div');
+      notification.style.position = 'fixed';
+      notification.style.top = '20px';
+      notification.style.right = '20px';
+      notification.style.padding = '12px 20px';
+      notification.style.borderRadius = '8px';
+      notification.style.color = 'white';
+      notification.style.fontSize = '14px';
+      notification.style.fontWeight = '500';
+      notification.style.zIndex = '10000';
+      notification.style.transition = 'all 0.3s ease';
+      notification.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+      
+      if (type === 'success') {
+        notification.style.backgroundColor = '#67c23a';
+      } else {
+        notification.style.backgroundColor = '#f56c6c';
+      }
+      
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      // 动画效果
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+          document.body.removeChild(notification);
+        }, 300);
+      }, 2000);
+    }
+    
+    // 初始渲染
+    render();
+    
+    // 添加事件监听器
+    const editor = document.getElementById('editor');
+    editor.addEventListener('input', render);
+  </script>
+</body>
+</html>

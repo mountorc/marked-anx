@@ -16,7 +16,10 @@ export function generateNavigation(currentPath = '/') {
   html += '    <a href="/" class="anx-nav-logo">marked-ANX-demo</a>\n';
   html += '    <ul class="anx-nav-menu">\n';
   
-  navigationConfig.forEach(item => {
+  // 处理新格式的导航配置
+  const navigationItems = navigationConfig.items || navigationConfig;
+  
+  navigationItems.forEach(item => {
     html += '      <li class="anx-nav-item">\n';
     html += '        <a href="' + item.url_page + '" class="anx-nav-link' + (item.url_page === currentPath ? ' active' : '') + '">' + item.title + '</a>\n';
     html += '      </li>\n';

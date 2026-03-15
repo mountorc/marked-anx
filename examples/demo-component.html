@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Marked ANX Component Usage Demo</title>
+  <style>
+    /* 全局样式 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    
+    /* 导航栏样式 */
+    .anx-nav {
+      background-color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 0 20px;
+    }
+    .anx-nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 60px;
+    }
+    .anx-nav-logo {
+      font-size: 18px;
+      font-weight: bold;
+      color: #409eff;
+      text-decoration: none;
+    }
+    .anx-nav-menu {
+      display: flex;
+      list-style: none;
+    }
+    .anx-nav-item {
+      margin-left: 20px;
+      position: relative;
+    }
+    .anx-nav-link {
+      display: block;
+      padding: 8px 12px;
+      color: #606266;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    .anx-nav-link:hover {
+      color: #409eff;
+      background-color: #ecf5ff;
+    }
+    .anx-nav-link.active {
+      color: #409eff;
+      font-weight: 500;
+      background-color: #ecf5ff;
+    }
+    
+    /* 内容样式 */
+    .content {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .content-header {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e4e7ed;
+    }
+    .content-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #303133;
+      margin-bottom: 10px;
+    }
+    .content-header p {
+      color: #606266;
+      font-size: 14px;
+    }
+    
+    /* 示例容器样式 */
+    .example-container {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .example-header {
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .example-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #303133;
+      margin-bottom: 5px;
+    }
+    .example-header p {
+      color: #606266;
+      font-size: 14px;
+    }
+    
+    /* 代码块样式 */
+    .code-block {
+      background-color: #f0f2f5;
+      padding: 16px;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 15px 0;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 14px;
+    }
+    
+    /* 输入区域样式 */
+    .input-area {
+      margin: 15px 0;
+    }
+    .input-area label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #303133;
+    }
+    .input-area textarea {
+      width: 100%;
+      height: 150px;
+      padding: 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      resize: vertical;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 14px;
+    }
+    .input-area button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #409eff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .input-area button:hover {
+      background-color: #66b1ff;
+    }
+  </style>
+  <script type="module" src="/src/component/anx-element.js"></script>
+  <script type="module" src="/examples/marked-anx-component.js"></script>
+</head>
+<body>
+  <anx-render auto-set='{"showMode":"header"}' value="component" src="http://localhost:4665/anx/config/navigation"></anx-render>
+  
+  <div class="content">
+    <div class="content-header">
+      <h1>Marked ANX Component Usage</h1>
+      <p>This demo shows how to use the marked-anx-component custom element in other pages.</p>
+    </div>
+    
+    <!-- 示例1：从URL加载Markdown -->
+    <div class="example-container">
+      <div class="example-header">
+        <h2>Example 1: Load Markdown from URL</h2>
+        <p>Using the src attribute to load markdown from a URL</p>
+      </div>
+      <div class="code-block">
+        &lt;marked-anx src="/examples/demo.md"&gt;&lt;/marked-anx&gt;
+      </div>
+      <marked-anx src="/examples/demo.md"></marked-anx>
+    </div>
+    
+    <!-- 示例2：直接传递Markdown内容 -->
+    <div class="example-container">
+      <div class="example-header">
+        <h2>Example 2: Pass Markdown directly</h2>
+        <p>Using the tag content to pass markdown content directly</p>
+      </div>
+      <div class="code-block">
+        &lt;marked-anx&gt;# Hello<br>
+        This is a **test** of the marked-anx component.<br>
+        <br>
+        :::anx<br>
+        {<br>
+          "kind": "box",<br>
+          "title": "Test Box",<br>
+          "data": [<br>
+            { "name": "Item 1", "value": "Value 1" },<br>
+            { "name": "Item 2", "value": "Value 2" }<br>
+          ],<br>
+          "html": "&lt;div&gt;{{name}}: {{value}}&lt;/div&gt;"<br>
+        }<br>
+        :::<br>
+        &lt;/marked-anx&gt;
+      </div>
+      <marked-anx>
+# Hello
+This is a **test** of the marked-anx component.
+
+:::anx
+{
+  "kind": "box",
+  "title": "Test Box",
+  "data": [
+    { "name": "Item 1", "value": "Value 1" },
+    { "name": "Item 2", "value": "Value 2" }
+  ],
+  "html": "<div>{{name}}: {{value}}</div>"
+}
+:::
+      </marked-anx>
+    </div>
+    
+    <!-- 示例3：动态设置Markdown内容 -->
+    <div class="example-container">
+      <div class="example-header">
+        <h2>Example 3: Dynamic Markdown</h2>
+        <p>Using JavaScript to dynamically set markdown content</p>
+      </div>
+      <div class="input-area">
+        <label for="markdown-input">Enter Markdown:</label>
+        <textarea id="markdown-input"># Dynamic Markdown
+
+Enter your markdown here, including ANX components.
+
+:::anx
+{
+  "kind": "text",
+  "value": "This is a dynamic text component"
+}
+:::
+</textarea>
+        <button id="update-btn">Update Content</button>
+      </div>
+      <marked-anx id="dynamic-component"></marked-anx>
+    </div>
+  </div>
+  
+  <script type="module">
+    // 等待自定义元素注册完成
+    customElements.whenDefined('marked-anx').then(() => {
+      // 动态更新示例
+      const updateBtn = document.getElementById('update-btn');
+      const markdownInput = document.getElementById('markdown-input');
+      const dynamicComponent = document.getElementById('dynamic-component');
+      
+      updateBtn.addEventListener('click', () => {
+        const markdown = markdownInput.value;
+        dynamicComponent.setMarkdown(markdown);
+      });
+      
+      // 初始设置
+      dynamicComponent.setMarkdown(markdownInput.value);
+    });
+  </script>
+</body>
+</html>

@@ -3,7 +3,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { marked } from 'marked';
 import markedAnxComponent from '../dist/marked-anx-component.mjs';
-import { generateNavigation } from './demo-navigation.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,22 +28,34 @@ export function handleComponentMjsDemo(req, res) {
     });
     
     // 处理:::anx语法块
-    html = html.replace(/<p>:::anx<br>([\s\S]*?)<br>:::<\/p>/g, (match, content) => {
-      try {
-        // 移除<br>标签并解析JSON
-        const jsonContent = content.replace(/<br>/g, '\n').replace(/&quot;/g, '"');
-        const component = JSON.parse(jsonContent);
-        return `<anx-render>${JSON.stringify(component)}</anx-render>`;
-      } catch (error) {
-        console.error('ANX plugin error:', error);
-        return `<anx-render>{"kind": "text", "value": "Invalid JSON: ${error.message}"}</anx-render>`;
-      }
-    });
+    // 直接从原始markdown文件中提取anx块
+    const anxBlocks = testMarkdown.match(/:::anx\n([\s\S]*?)\n:::/g);
+    if (anxBlocks) {
+      anxBlocks.forEach((block, index) => {
+        try {
+          const jsonContent = block.replace(/:::anx\n|\n:::/g, '').trim();
+          const component = JSON.parse(jsonContent);
+          const renderedComponent = `<anx-render>${JSON.stringify(component)}</anx-render>`;
+          const blockHtml = marked(block, {
+            breaks: true,
+            gfm: true,
+            sanitize: false
+          }).trim();
+          html = html.replace(blockHtml, renderedComponent);
+        } catch (error) {
+          console.error('ANX plugin error:', error);
+          const errorComponent = `<anx-render>{"kind": "text", "value": "Invalid JSON: ${error.message}"}</anx-render>`;
+          const blockHtml = marked(block, {
+            breaks: true,
+            gfm: true,
+            sanitize: false
+          }).trim();
+          html = html.replace(blockHtml, errorComponent);
+        }
+      });
+    }
     console.log('Rendered HTML (component mjs):', html);
   
-    // 生成导航栏HTML
-    const navHTML = generateNavigation('/component-mjs');
-    
     res.send(`
 <!DOCTYPE html>
 <html>
@@ -63,52 +74,6 @@ export function handleComponentMjsDemo(req, res) {
       padding: 0;
       background-color: #f5f7fa;
       color: #333;
-    }
-    
-    /* 导航栏样式 */
-    .anx-nav {
-      background-color: #ffffff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      padding: 0 20px;
-    }
-    .anx-nav-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 60px;
-    }
-    .anx-nav-logo {
-      font-size: 18px;
-      font-weight: bold;
-      color: #409eff;
-      text-decoration: none;
-    }
-    .anx-nav-menu {
-      display: flex;
-      list-style: none;
-    }
-    .anx-nav-item {
-      margin-left: 20px;
-      position: relative;
-    }
-    .anx-nav-link {
-      display: block;
-      padding: 8px 12px;
-      color: #606266;
-      text-decoration: none;
-      border-radius: 4px;
-      transition: all 0.3s ease;
-    }
-    .anx-nav-link:hover {
-      color: #409eff;
-      background-color: #ecf5ff;
-    }
-    .anx-nav-link.active {
-      color: #409eff;
-      font-weight: 500;
-      background-color: #ecf5ff;
     }
     
     /* 内容样式 */
@@ -234,7 +199,7 @@ export function handleComponentMjsDemo(req, res) {
   <script type="module" src="../dist/anx-element.mjs"></script>
 </head>
 <body>
-${navHTML}
+  <anx-render auto-set='{"showMode":"header"}' src="http://localhost:4665/anx/config/navigation"></anx-render>
   <div class="content">
     <div class="content-header">
       <h1>ANX Component MJS Demo</h1>

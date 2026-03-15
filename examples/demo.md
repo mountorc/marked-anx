@@ -15,14 +15,23 @@
 :::anx
 {
   "kind": "box",
+  "title": "Product List dataset",
+  "dataset": {
+    "url_dataset": "http://localhost:4665/dataset"
+  },
+  "html": "<div class='product'><h2>{{name}}</h2><p class='price'>{{price}}</p></div>"
+}
+:::
+
+:::anx
+{
+  "kind": "box",
   "title": "Product List",
-  "dataset":{"url_dataset":"http://localhost:4665/dataset"}
-  "data-stop": [
+  "data": [
     { "name": "Product 1", "price": 100 },
-    { "name": "Product 2", "price": 28000 },
-    { "name": "Product 3", "price": 300 }
+    { "name": "Product 2", "price": 28000 }
   ],
-  "html": "<div class='product'><h2>{{name}}</h2><p class='price'>${{price}}</p></div>"
+  "html": "<div class='product'><h2>{{name}}</h2><p class='price'>{{price}}</p></div>"
 }
 :::
 
