@@ -1,6 +1,7 @@
 // 组件渲染器
-import { fetchDataset } from './dataset.js';
+import { fetchDataset } from './utils/dataset.js';
 import { renderNavigation } from './kinds/navigation.js';
+import { addEventListeners } from './utils/trigger-and-tap.js';
 
 /**
  * 渲染组件
@@ -21,12 +22,20 @@ export function renderComponent(component) {
       return renderText(component);
     case 'input':
       return renderInput(component);
+    case 'textarea':
+      return renderTextarea(component);
     case 'button':
       return renderButton(component);
     case 'form':
       return renderForm(component);
     case 'navigation':
       return renderNavigation(component);
+    case 'date':
+      return renderDate(component);
+    case 'options':
+      return renderOptions(component);
+    case 'checkbox':
+      return renderCheckbox(component);
     default:
       return `<div class="anx-component anx-${component.kind}">${JSON.stringify(component)}</div>`;
   }
@@ -65,13 +74,16 @@ export function renderBox(component) {
   const data = component.data || [];
   const html = component.html || '';
   const template = component.template || '';
+  const tapSet = component.tapSet || '';
   
   let content = '';
   if (data.length > 0) {
     data.forEach((item, index) => {
       const templateContent = template || html;
       if (templateContent) {
-        content += `<div class="anx-box-item">${parseTemplate(templateContent, item)}</div>`;
+        const itemData = JSON.stringify(item).replace(/"/g, '&quot;');
+        const tapAttrs = tapSet ? `data-tap-set="${tapSet}" data-item-data="${itemData}" style="cursor: pointer;"` : '';
+        content += `<div class="anx-box-item" ${tapAttrs}>${parseTemplate(templateContent, item)}</div>`;
       }
     });
   } else {
@@ -112,7 +124,8 @@ export function renderBoard(component) {
  */
 export function renderText(component) {
   const value = component.value || '';
-  return `<div class="anx-text">${value}</div>`;
+  const id = component.uuid || `text-${Math.random().toString(36).substr(2, 9)}`;
+  return `<div class="anx-text" data-component-id="${id}" ${component.tapSet || component.triggerSet ? 'style="cursor: pointer;"' : ''}>${value}</div>`;
 }
 
 /**
@@ -145,6 +158,97 @@ export function renderButton(component) {
     <button class="anx-button" ${action ? `data-action="${action}"` : ''}>
       ${label}
     </button>
+  `;
+}
+
+/**
+ * 渲染Date组件
+ * @param {Object} component - 组件配置
+ * @returns {string} - 渲染后的HTML
+ */
+export function renderDate(component) {
+  const placeholder = component.placeholder || '';
+  const value = component.value || '';
+  const nick = component.nick || '';
+  
+  return `
+    <div class="anx-input-wrapper">
+      <input type="date" class="anx-input" placeholder="${placeholder}" value="${value}" ${nick ? `name="${nick}"` : ''}>
+    </div>
+  `;
+}
+
+/**
+ * 渲染Options组件
+ * @param {Object} component - 组件配置
+ * @returns {string} - 渲染后的HTML
+ */
+export function renderOptions(component) {
+  const options = component.options || [];
+  const value = component.value || '';
+  const nick = component.nick || '';
+  
+  let optionsHTML = '';
+  options.forEach((option, index) => {
+    const isSelected = option.value === value;
+    optionsHTML += `
+      <div class="anx-radio-item">
+        <input type="radio" id="${nick}_${index}" name="${nick}" value="${option.value}" ${isSelected ? 'checked' : ''}>
+        <label for="${nick}_${index}">${option.title}</label>
+      </div>
+    `;
+  });
+  
+  return `
+    <div class="anx-options-wrapper">
+      ${optionsHTML}
+    </div>
+  `;
+}
+
+/**
+ * 渲染Checkbox组件
+ * @param {Object} component - 组件配置
+ * @returns {string} - 渲染后的HTML
+ */
+export function renderCheckbox(component) {
+  const options = component.options || [];
+  const value = component.value || [];
+  const nick = component.nick || '';
+  
+  let checkboxesHTML = '';
+  options.forEach((option, index) => {
+    const isChecked = Array.isArray(value) && value.includes(option.value);
+    checkboxesHTML += `
+      <div class="anx-checkbox-item">
+        <input type="checkbox" id="${nick}_${index}" name="${nick}" value="${option.value}" ${isChecked ? 'checked' : ''}>
+        <label for="${nick}_${index}">${option.title}</label>
+      </div>
+    `;
+  });
+  
+  return `
+    <div class="anx-checkbox-wrapper">
+      ${checkboxesHTML}
+    </div>
+  `;
+}
+
+/**
+ * 渲染Textarea组件
+ * @param {Object} component - 组件配置
+ * @returns {string} - 渲染后的HTML
+ */
+export function renderTextarea(component) {
+  const placeholder = component.placeholder || '';
+  const value = component.value || '';
+  const nick = component.nick || '';
+  const rows = component.rows || 4;
+  
+  return `
+    <div class="anx-input-wrapper">
+      <textarea class="anx-input" placeholder="${placeholder}" rows="${rows}" ${nick ? `name="${nick}"` : ''}>${value}</textarea>
+    </div>
   `;
 }
 

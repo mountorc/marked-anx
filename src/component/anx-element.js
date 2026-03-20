@@ -1,7 +1,8 @@
 // 定义自定义元素 anx-component
 import { renderComponent } from '../common/common.js';
-import { fetchDataset } from '../common/dataset.js';
+import { fetchDataset } from '../common/utils/dataset.js';
 import { renderNavigation } from '../common/kinds/navigation.js';
+import { addEventListeners } from '../common/utils/trigger-and-tap.js';
 
 // 只在浏览器环境中定义自定义元素
 if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof HTMLElement !== 'undefined') {
@@ -370,6 +371,111 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof H
           </style>
           <div class="anx-container">${renderedContent}</div>
         `;
+
+        // 添加事件监听器
+        if (component.tapSet || component.triggerSet) {
+          // 处理带有data-component-id的元素
+          const element = this.shadowRoot.querySelector(`[data-component-id]`);
+          if (element) {
+            addEventListeners(element, component, component.data || {});
+          }
+        }
+        
+        // 处理box组件的tapSet事件
+        if (component.kind === 'box' && component.tapSet) {
+          const boxItems = this.shadowRoot.querySelectorAll('.anx-box-item[data-tap-set]');
+          boxItems.forEach(item => {
+            const itemDataStr = item.getAttribute('data-item-data');
+            if (itemDataStr) {
+              try {
+                const itemData = JSON.parse(itemDataStr);
+                const tapSet = JSON.parse(item.getAttribute('data-tap-set'));
+                if (tapSet) {
+                  item.addEventListener('click', (event) => {
+                    if (typeof tapSet === 'object') {
+                      Object.keys(tapSet).forEach(actionType => {
+                        const actionConfig = tapSet[actionType];
+                        // 处理action
+                        switch (actionType) {
+                          case 'navigateTo':
+                            if (actionConfig.path) {
+                              let path = actionConfig.path;
+                              const params = new URLSearchParams();
+                              
+                              if (actionConfig.paramMap && typeof actionConfig.paramMap === 'object') {
+                                Object.keys(actionConfig.paramMap).forEach(targetParam => {
+                                  const sourceField = actionConfig.paramMap[targetParam];
+                                  const parts = sourceField.split('.');
+                                  let value = itemData;
+                                  
+                                  for (const part of parts) {
+                                    if (value === undefined || value === null) break;
+                                    value = value[part];
+                                  }
+                                  
+                                  if (value !== undefined) {
+                                    params.set(targetParam, value);
+                                  }
+                                });
+                              }
+                              
+                              const queryString = params.toString();
+                              if (queryString) {
+                                path = `${path}?${queryString}`;
+                              }
+                              
+                              window.location.href = path;
+                            }
+                            break;
+                          case 'requestSet':
+                            if (actionConfig.url) {
+                              const params = new URLSearchParams();
+                              
+                              if (actionConfig.paramMap && typeof actionConfig.paramMap === 'object') {
+                                Object.keys(actionConfig.paramMap).forEach(targetParam => {
+                                  const sourceField = actionConfig.paramMap[targetParam];
+                                  const parts = sourceField.split('.');
+                                  let value = itemData;
+                                  
+                                  for (const part of parts) {
+                                    if (value === undefined || value === null) break;
+                                    value = value[part];
+                                  }
+                                  
+                                  if (value !== undefined) {
+                                    params.set(targetParam, value);
+                                  }
+                                });
+                              }
+                              
+                              const queryString = params.toString();
+                              const url = queryString ? `${actionConfig.url}?${queryString}` : actionConfig.url;
+                              
+                              console.log('Sending request:', url);
+                              
+                              fetch(url)
+                                .then(response => response.json())
+                                .then(responseData => {
+                                  console.log('Request response:', responseData);
+                                })
+                                .catch(error => {
+                                  console.error('Request error:', error);
+                                });
+                            }
+                            break;
+                          default:
+                            console.warn(`Unknown action type: ${actionType}`);
+                        }
+                      });
+                    }
+                  });
+                }
+              } catch (error) {
+                console.error('Error parsing item data or tapSet:', error);
+              }
+            }
+          });
+        }
       } catch (error) {
         console.error("Error:", error);
         this.shadowRoot.innerHTML = `
