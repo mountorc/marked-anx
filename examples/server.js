@@ -177,6 +177,62 @@ app.get('/form', (req, res) => {
   }
 });
 
+// trigger and tap test路径
+app.get('/test-trigger-and-tap', (req, res) => {
+  try {
+    const demoHtmlPath = path.join(__dirname, 'test-trigger-and-tap.html');
+    const demoHtml = fs.readFileSync(demoHtmlPath, 'utf8');
+  
+    res.send(demoHtml);
+  } catch (error) {
+    console.error('Error:', error);
+    res.send(`
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Error</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: white; color: black; }
+  </style>
+</head>
+<body>
+  <h1>Error</h1>
+  <p>${error.message}</p>
+  <pre>${error.stack}</pre>
+</body>
+</html>
+    `);
+  }
+});
+
+// text tap test路径
+app.get('/test-text-tap', (req, res) => {
+  try {
+    const demoHtmlPath = path.join(__dirname, 'test-text-tap.html');
+    const demoHtml = fs.readFileSync(demoHtmlPath, 'utf8');
+  
+    res.send(demoHtml);
+  } catch (error) {
+    console.error('Error:', error);
+    res.send(`
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Error</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: white; color: black; }
+  </style>
+</head>
+<body>
+  <h1>Error</h1>
+  <p>${error.message}</p>
+  <pre>${error.stack}</pre>
+</body>
+</html>
+    `);
+  }
+});
+
 // element demo路径
 app.get('/element', (req, res) => {
   try {
@@ -361,4 +417,6 @@ app.listen(port, () => {
   console.log(`Editor Demo: http://localhost:${port}/editor`);
   console.log(`Dataset Demo: http://localhost:${port}/dataset`);
   console.log(`Marked ANX Demo: http://localhost:${port}/demo-marked-anx`);
+  console.log(`Trigger and Tap Test: http://localhost:${port}/test-trigger-and-tap`);
+  console.log(`Text Tap Test: http://localhost:${port}/test-text-tap`);
 });

@@ -225,6 +225,41 @@ class MarkedAnx extends HTMLElement {
             font-weight: bold;
             font-size: 16px;
           }
+          
+          /* Options组件样式 */
+          .anx-options-wrapper {
+            margin: 12px 0;
+          }
+          .anx-radio-item {
+            margin-bottom: 8px;
+          }
+          .anx-radio-item input[type="radio"] {
+            margin-right: 8px;
+          }
+          
+          /* Checkbox组件样式 */
+          .anx-checkbox-wrapper {
+            margin: 12px 0;
+          }
+          .anx-checkbox-item {
+            margin-bottom: 8px;
+          }
+          .anx-checkbox-item input[type="checkbox"] {
+            margin-right: 8px;
+          }
+          
+          /* Date组件样式 */
+          .anx-input[type="date"] {
+            width: 100%;
+          }
+          
+          /* Textarea组件样式 */
+          .anx-input[type="textarea"],
+          textarea.anx-input {
+            width: 100%;
+            resize: vertical;
+            font-family: inherit;
+          }
         </style>
         <div class="marked-anx-content">${html}</div>
       `;

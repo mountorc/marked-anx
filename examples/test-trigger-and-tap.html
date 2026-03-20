@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trigger and Tap Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .test-button {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    .test-button:hover {
+      background-color: #0069d9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Trigger and Tap Test</h1>
+  
+  <div class="test-section">
+    <h2>TapSet Test</h2>
+    <p>Click the button below to test tapSet functionality:</p>
+    <button class="test-button" id="tapTestButton">Tap Me</button>
+  </div>
+
+  <script type="module">
+    import { addEventListeners } from '../src/common/utils/trigger-and-tap.js';
+
+    // Test data
+    const testData = {
+      id: 123,
+      name: 'Test Item',
+      value: 'Test Value'
+    };
+
+    // Get test button
+    const tapTestButton = document.getElementById('tapTestButton');
+
+    // Configure tapSet
+    const config = {
+      tapSet: {
+        navigateTo: {
+          path: '/test',
+          paramMap: {
+            id: 'id',
+            name: 'name'
+          }
+        }
+      }
+    };
+
+    // Add event listeners
+    addEventListeners(tapTestButton, config, testData);
+
+    console.log('Trigger and Tap test initialized');
+  </script>
+</body>
+</html>

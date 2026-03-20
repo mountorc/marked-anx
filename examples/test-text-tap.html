@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Tap Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Text Tap Test</h1>
+  
+  <div class="test-section">
+    <h2>Text with TapSet</h2>
+    <p>Click the text below to test tapSet functionality:</p>
+    <anx-render>
+      {
+        "kind": "text",
+        "value": "Click me to navigate!",
+        "tapSet": {
+          "navigateTo": {
+            "path": "/test",
+            "paramMap": {
+              "id": "123",
+              "name": "test"
+            }
+          }
+        }
+      }
+    </anx-render>
+  </div>
+
+  <script type="module" src="../src/component/anx-element.js"></script>
+</body>
+</html>

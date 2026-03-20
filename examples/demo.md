@@ -19,7 +19,15 @@
   "dataset": {
     "url_dataset": "http://localhost:4665/dataset"
   },
-  "html": "<div class='product'><h2>{{name}}</h2><p class='price'>{{price}}</p></div>"
+  "html": "<div class='product'><h2>{{name}}</h2><p class='price'>{{price}}</p></div>",
+  "tapSet": {
+          "navigateTo": {
+            "path": "/test",
+            "paramMap": {
+              "name": "name"
+            }
+          }
+  }
 }
 :::
 
@@ -54,7 +62,16 @@
 :::anx
 {
   "kind": "text",
-  "value": "This is a text component"
+  "value": "This is a text component for tap",
+  "tapSet": {
+          "navigateTo": {
+            "path": "/test",
+            "paramMap": {
+              "id": "123",
+              "name": "test"
+            }
+          }
+  }
 }
 :::
 
