@@ -82,7 +82,8 @@ export function renderBox(component) {
       const templateContent = template || html;
       if (templateContent) {
         const itemData = JSON.stringify(item).replace(/"/g, '&quot;');
-        const tapAttrs = tapSet ? `data-tap-set="${tapSet}" data-item-data="${itemData}" style="cursor: pointer;"` : '';
+        const tapSetStr = typeof tapSet === 'object' ? JSON.stringify(tapSet).replace(/"/g, '&quot;') : tapSet;
+        const tapAttrs = tapSet ? `data-tap-set="${tapSetStr}" data-item-data="${itemData}" style="cursor: pointer;"` : '';
         content += `<div class="anx-box-item" ${tapAttrs}>${parseTemplate(templateContent, item)}</div>`;
       }
     });
